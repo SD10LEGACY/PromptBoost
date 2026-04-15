@@ -31,5 +31,195 @@
         ],
         "source": "youtube",
         "text": "I will provide a rough prompt. Your task is to rewrite it using the CO-STAR framework (Context, Objective, Style, Tone, Audience, Response). Maintain the original intent but maximize clarity and output quality. Draft: [INSERT DRAFT]"
+    },
+    {
+        "title": "PromptForge",
+        "tag": "Coding",
+        "platforms": [
+            "chatgpt",
+            "claude",
+            "gemini"
+        ],
+        "text": "Design an open-source AI prompt engineering workbench with systematic evaluation, including AI-assisted prompt generation, systematic evaluation engine, multi-model support, and one-line Docker deployment.",
+        "id": 1776278538,
+        "source": "hacker_news"
+    },
+    {
+        "title": "Monkey's Paw Lesson",
+        "tag": "Creative",
+        "platforms": [
+            "chatgpt",
+            "claude",
+            "gemini"
+        ],
+        "text": "Analyze the short story 'The Monkey's Paw' by W.W. Jacobs and extract lessons that can be applied to AI prompt engineering, focusing on the consequences of careless or vague requests.",
+        "id": 1776278542,
+        "source": "hacker_news"
+    },
+    {
+        "title": "Gemini 3.1 Flash TTS Prompting",
+        "tag": "Coding",
+        "platforms": [
+            "gemini"
+        ],
+        "text": "Write a transcript for a voice model, including an audio profile, scene, and director's notes, and use inline tags to control the delivery of specific parts of the transcript, such as tone, pace, and emotional vibe, like [whispers], [laughs], or [excitedly].",
+        "id": 1776278549,
+        "source": "dev_to"
+    },
+    {
+        "title": "AI Model Selection",
+        "tag": "Coding",
+        "platforms": [
+            "chatgpt",
+            "claude",
+            "gemini"
+        ],
+        "text": "Explain the difference between using a pre-trained model, fine-tuning, and RAG, and provide guidance on when to use each approach, including the trade-offs and costs associated with fine-tuning, such as collecting example input-output pairs, GPU compute costs, and evaluation requirements.",
+        "id": 1776278553,
+        "source": "dev_to"
+    },
+    {
+        "title": "Optimize AI Prompts",
+        "tag": "Coding",
+        "platforms": [
+            "chatgpt",
+            "claude",
+            "gemini"
+        ],
+        "text": "Design a well-structured prompt to reduce ambiguity, improve accuracy, and minimize token consumption for cost optimization and efficient AI model usage.",
+        "id": 1776278557,
+        "source": "dev_to"
+    },
+    {
+        "title": "Encoded Constraints",
+        "tag": "Coding",
+        "platforms": [
+            "chatgpt",
+            "claude",
+            "gemini"
+        ],
+        "text": "Update the dependency of react to the latest 18 available and check that code is compatible with react 18, providing explicit file references and specific behavioral requirements to minimize correction loops and encode implicit constraints.",
+        "id": 1776278561,
+        "source": "dev_to"
+    },
+    {
+        "title": "Few-Shot Prompting",
+        "tag": "Coding",
+        "platforms": [
+            "chatgpt",
+            "claude",
+            "gemini"
+        ],
+        "text": "Provide 3-5 examples of what you want before asking the model to produce something new, as this approach teaches by example and reduces the need for lengthy explanations, resulting in more accurate and efficient output.",
+        "id": 1776278565,
+        "source": "dev_to"
+    },
+    {
+        "title": "Code Review and Implementation",
+        "tag": "Coding",
+        "platforms": [
+            "chatgpt",
+            "claude",
+            "gemini"
+        ],
+        "text": "Add consistent error handling across all API call sites. Scan the entire codebase, catch ApiException and rethrow as-is, catch all other exceptions and wrap in ApiException(statusCode: 0, message: e.toString()), and maintain existing feature-first clean architecture. Only modify the specified files, and do not touch auth or book features. Implement the changes in a way that is consistent with the existing Riverpod pattern and directory structure.",
+        "id": 1776278569,
+        "source": "dev_to"
+    },
+    {
+        "title": "Optimizing Claude API Calls",
+        "tag": "Coding",
+        "platforms": [
+            "chatgpt",
+            "claude",
+            "gemini"
+        ],
+        "text": "Compare the token costs of different data formats (JSON, YAML, Markdown, Plain Text, TOON) when sending data to the Claude API, and provide recommendations for minimizing token expenditure while maintaining data structure and accuracy.",
+        "id": 1776278573,
+        "source": "dev_to"
+    },
+    {
+        "title": "Anti-Sycophant Agent",
+        "tag": "Coding",
+        "platforms": [
+            "chatgpt",
+            "claude",
+            "gemini"
+        ],
+        "text": "Design an AI agent that disagrees with the user when necessary, providing direct opinions, explanations, and alternatives while tracking the cost of following bad advice. Implement a system that calibrates pushback, stating concerns, risks, and alternatives without arguing, to create a reliable decision-making tool.",
+        "id": 1776278581,
+        "source": "dev_to"
+    },
+    {
+        "title": "Optimize AI Context",
+        "tag": "Coding",
+        "platforms": [
+            "chatgpt",
+            "claude",
+            "gemini"
+        ],
+        "text": "Given a large language model and a context file, simplify the context to only include project-specific rules, constraints the model wouldn't infer, and truly required defaults, removing generic instructions and non-essential content to improve model accuracy and relevance.",
+        "id": 1776278585,
+        "source": "dev_to"
+    },
+    {
+        "title": "Stadium Control Center",
+        "tag": "Coding",
+        "platforms": [
+            "chatgpt",
+            "claude",
+            "gemini"
+        ],
+        "text": "Design a hyper-fast, real-time venue synchronization platform to minimize wait times at major sporting events by re-distributing crowds in real-time, utilizing pure WebSocket pipeline, Vanilla JS, and raw CSS Grid, with a focus on accessibility and localized pathing algorithm, all under 1MB in size.",
+        "id": 1776278589,
+        "source": "dev_to"
+    },
+    {
+        "title": "AI Feedback Loop",
+        "tag": "Coding",
+        "platforms": [
+            "chatgpt",
+            "claude",
+            "gemini"
+        ],
+        "text": "Design a self-hosted assistant with a built-in feedback mechanism using a local Ollama model to score interactions based on accuracy, relevance, and confidence, and utilize a reflection prompt to analyze subpar interactions, feeding the insights into DSPy to optimize system prompts.",
+        "id": 1776278592,
+        "source": "dev_to"
+    },
+    {
+        "title": "LLM Memory Engine",
+        "tag": "Coding",
+        "platforms": [
+            "next.js",
+            "python",
+            "hindsight"
+        ],
+        "text": "Create a dedicated memory engine for an LLM-based meeting intelligence platform, integrating a robust and scalable memory system to transform a fragile text-parser into a resilient meeting copilot, utilizing a decoupled two-phase architecture with a retain phase to structure unstructured conversation data and a reflect phase to synthesize insights via semantic graph reflection.",
+        "id": 1776278596,
+        "source": "dev_to"
+    },
+    {
+        "title": "Mitigating AI Hallucination",
+        "tag": "Coding",
+        "platforms": [
+            "chatgpt",
+            "claude",
+            "gemini"
+        ],
+        "text": "To minimize AI hallucination, use single-focus prompts, constrain output with JSON or numbered lists, provide examples, set refusal conditions, and prioritize prompt structure over model selection.",
+        "id": 1776278600,
+        "source": "dev_to"
+    },
+    {
+        "title": "POG-Task",
+        "tag": "Coding",
+        "platforms": [
+            "chatgpt",
+            "claude",
+            "gemini"
+        ],
+        "text": "Design a JSON Schema for task.schema.json and create a system protocol in pog-task-agent-instructions.md to standardize task structures and AI behavioral standards for an improved workflow in AI collaboration.",
+        "id": 1776278604,
+        "source": "dev_to"
     }
 ]
