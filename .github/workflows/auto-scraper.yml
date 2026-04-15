@@ -2,8 +2,8 @@ name: Auto-Scrape Trending Prompts
 
 on:
   schedule:
-    - cron: '0 0 * * *' # Runs every day at midnight
-  workflow_dispatch: # Allows you to run it manually from the GitHub website
+    - cron: '0 */6 * * *' # Every 6 hours
+  workflow_dispatch: # Allows you to run it manually from the Actions tab # Allows you to run it manually from the GitHub website
 
 jobs:
   build:
