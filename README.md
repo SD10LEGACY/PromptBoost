@@ -4,13 +4,13 @@
 <!--                   ANIMATED HEADER                      -->
 <!-- ══════════════════════════════════════════════════════ -->
 
-<img src="https://capsule-render.vercel.app/api?type=waving&color=0:0d1117,35:063b35,70:10a37f,100:0d1117&height=300&section=header&text=PromptBoost&fontSize=82&fontAlignY=42&fontColor=ffffff&desc=The%20On-Device%20Prompt%20Engineering%20Engine&descAlignY=62&descSize=24&animation=fadeIn" width="100%" alt="PromptBoost Header"/>
+<img src="https://capsule-render.vercel.app/api?type=waving&color=0:0d1117,35:063b35,70:10a37f,100:0d1117&height=300&section=header&text=PromptBoost&fontSize=82&fontAlignY=42&fontColor=ffffff&desc=The%20On-Device%20Prompt%20Engineering%20Engine&descAlignY=62&descSize=24&animation=fadeIn&v=2" width="100%" alt="PromptBoost Header"/>
 
 <!-- ══════════════════════════════════════════════════════ -->
 <!--                  TYPING ANIMATION                      -->
 <!-- ══════════════════════════════════════════════════════ -->
 
-[
+[![Typing SVG](https://readme-typing-svg.demolab.com?font=Fira+Code&weight=600&size=18&duration=2800&pause=900&color=10A37F&center=true&vCenter=true&width=750&height=48&lines=On-Device+Inference+via+Gemini+Nano;Zero+API+Keys.+Zero+Latency.+Zero+Data+Leakage.;Your+Keystrokes+Never+Leave+Your+Machine.;CO-STAR+and+ReAct+Frameworks+On+the+Fly.;Bauhaus+Constructivist+UI+-+Pure+Vanilla+CSS.)](https://git.io/typing-svg)
 
 <br><br>
 
@@ -41,7 +41,7 @@
 
 <div align="center">
 
-## The Problem. The Solution.
+## 🚨 The Problem. The Solution.
 
 </div>
 
@@ -81,7 +81,7 @@
     </td>
     <td width="50%" valign="top">
       <h3>🔐 Privacy by Architecture</h3>
-      <p>There is no telemetry, no analytics, no logging. The extension's architecture is <b>fundamentally incapable</b> of exfiltrating data because inference runs inside Chrome's sandboxed on-device model. Privacy is not a policy — it's the code itself.</p>
+      <p>There is no telemetry, no analytics, no logging. The extension's architecture is <b>fundamentally incapable</b> of exfiltrating data because inference runs inside Chrome's sandboxed on-device model. Privacy isn't a policy — it's the code itself.</p>
     </td>
   </tr>
 </table>
@@ -116,11 +116,11 @@ The extension's interface avoids the standard "SaaS Bootstrap" aesthetic by impl
 ┌─────────────────────────────────────────────────────────┐
 │  DESIGN PILLARS                                         │
 │                                                         │
-│  GEOMETRY    →  Strict programmatic color-blocking      │
-│  DEPTH       →  Hard offset shadows, not soft blurs     │
-│  MOTION      →  CSS translation matrices for reveals    │
-│  SIDEBAR     →  Slide-out glassmorphism panel           │
-│  PALETTE     →  #0d1117 base  ·  #10a37f accent         │
+│  📐 GEOMETRY    →  Strict programmatic color-blocking   │
+│  🌑 DEPTH       →  Hard offset shadows, not soft blurs  │
+│  🌊 MOTION      →  CSS translation matrices for reveals │
+│  🎭 SIDEBAR     →  Slide-out glassmorphism panel        │
+│  🖤 PALETTE     →  #0d1117 base · #10a37f accent        │
 └─────────────────────────────────────────────────────────┘
 ```
 
@@ -135,9 +135,9 @@ Injecting text into modern AI web apps is notoriously difficult. React and Prose
 ```javascript
 /**
  * PROMPTBOOST — Native React State Override
- *
- * Intercepts the HTMLTextAreaElement native setter via Object.getOwnPropertyDescriptor,
- * then fires a bubbling input event to trick React's SyntheticEvent system
+ * 
+ * Intercepts the HTMLTextAreaElement's native setter via Object.getOwnPropertyDescriptor,
+ * then fires a bubbling 'input' event to trick React's SyntheticEvent system
  * into treating the programmatic write as organic user input.
  */
 function injectIntoReactControlledInput(element, engineeredText) {
@@ -170,11 +170,11 @@ function injectIntoReactControlledInput(element, engineeredText) {
 | ✅ | Cloud JSON prompt library with slide-out sidebar |
 | ✅ | Bauhaus Constructivist UI system |
 | 🔄 | ReAct framework for agentic task prompts |
-| 🔄 | `claude.ai` and `gemini.google.com` support |
+| 🔄 | `claude.ai` & `gemini.google.com` support |
 | ⏳ | Custom prompt framework builder (user-defined templates) |
 | ⏳ | Chrome Web Store submission |
 | ⏳ | Firefox MV3 port |
-| 💡 | Prompt history and versioning |
+| 💡 | Prompt history & versioning |
 
 </div>
 
@@ -251,7 +251,7 @@ Please follow [Conventional Commits](https://www.conventionalcommits.org/) for c
 <!--                    FOOTER ANIMATION                    -->
 <!-- ══════════════════════════════════════════════════════ -->
 
-[
+[![Typing SVG](https://readme-typing-svg.demolab.com?font=Fira+Code&weight=500&size=15&duration=4000&pause=1500&color=10A37F&center=true&vCenter=true&width=600&height=40&lines=Built+with+On-Device+AI+by+Shreyojit.;Privacy+is+not+a+feature.+Its+the+foundation.)](https://git.io/typing-svg)
 
 <br>
 
