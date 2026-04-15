@@ -30,7 +30,9 @@
       ],
       "css": [
         "content/style.css"
-      ]
+      ],
+      "run_at": "document_end",
+      "world": "MAIN"
     }
   ],
   "icons": {

@@ -1,99 +1,122 @@
 import requests
 import google.generativeai as genai
 from googleapiclient.discovery import build
+from youtube_transcript_api import YouTubeTranscriptApi
 import json
 import os
 import time
 
-# --- 1. SECURE API KEYS (Only Gemini & YouTube Needed Now!) ---
+# --- 1. SECURE API KEYS ---
 GEMINI_KEY = os.getenv("GEMINI_API_KEY")
 YOUTUBE_KEY = os.getenv("YOUTUBE_API_KEY")
 
 if not all([GEMINI_KEY, YOUTUBE_KEY]):
-    print("❌ Missing Gemini or YouTube API keys. Exiting.")
+    print("❌ API keys missing. Check GitHub Secrets.")
     exit(1)
 
-# --- 2. CONFIGURE APIS ---
-print("🔌 Initializing Omnichannel Connections...")
+# --- 2. CONFIGURATION ---
+print("🔌 Initializing the Prompt-Firehose Engine...")
 youtube = build('youtube', 'v3', developerKey=YOUTUBE_KEY)
 genai.configure(api_key=GEMINI_KEY)
 model = genai.GenerativeModel('gemini-1.5-flash')
 
+DB_PATH = "database/prompts.json"
 raw_data_firehose = []
 
-# --- 3. FETCH REDDIT DATA (The CryptoPanic Method - NO KEYS!) ---
-print("🕵️ Scraping Reddit via Public JSON endpoints...")
-subreddits = ["PromptEngineering", "ChatGPTPro", "ClaudeAI"]
+# --- 3. DATA PERSISTENCE (Load Existing) ---
+def load_existing_db():
+    if os.path.exists(DB_PATH):
+        try:
+            with open(DB_PATH, "r", encoding="utf-8") as f:
+                return json.load(f)
+        except: return []
+    return []
 
-# Reddit requires a custom User-Agent or it blocks the request
-headers = {'User-Agent': 'PromptBoost Data Aggregator/1.0 (Contact: local-dev)'}
+# --- 4. REDDIT AGGRESSIVE SCRAPE ---
+print("🕵️ Scraping Reddit Firehose...")
+subreddits = ["PromptEngineering", "ChatGPTPro", "ClaudeAI", "OpenAI", "Midjourney", "StableDiffusion"]
+headers = {'User-Agent': 'PromptBoost/2.0 (BCA Project Class of 2026)'}
 
 for sub in subreddits:
     try:
-        url = f"https://www.reddit.com/r/{sub}/top.json?t=week&limit=3"
-        response = requests.get(url, headers=headers)
-        
-        if response.status_code == 200:
-            data = response.json()
-            for post in data['data']['children']:
-                title = post['data'].get('title', '')
-                text = post['data'].get('selftext', '')
-                if text and len(text) > 100:
-                    raw_data_firehose.append(f"[REDDIT] {title}\n{text}")
-        else:
-            print(f"⚠️ Reddit returned status {response.status_code} for r/{sub}")
+        # Pulling 25 top posts from the last week for each sub
+        url = f"https://www.reddit.com/r/{sub}/top.json?t=week&limit=25"
+        res = requests.get(url, headers=headers)
+        if res.status_code == 200:
+            posts = res.json()['data']['children']
+            for post in posts:
+                p = post['data']
+                content = f"{p.get('title', '')} {p.get('selftext', '')}"
+                if len(content) > 150: # Only quality length
+                    raw_data_firehose.append({"source": "reddit", "text": content})
     except Exception as e:
-        print(f"⚠️ Reddit Fetch Error: {e}")
+        print(f"⚠️ Reddit Error (r/{sub}): {e}")
 
-# --- 4. FETCH YOUTUBE DATA ---
-print("📺 Scraping YouTube...")
-try:
-    yt_request = youtube.search().list(
-        q="best ChatGPT Claude prompts", part="snippet", type="video", maxResults=3, order="viewCount"
-    )
-    yt_response = yt_request.execute()
-    for item in yt_response['items']:
-        video_id = item['id']['videoId']
-        vid_request = youtube.videos().list(part="snippet", id=video_id)
-        vid_response = vid_request.execute()
-        desc = vid_response['items'][0]['snippet']['description']
-        if len(desc) > 100:
-            raw_data_firehose.append(f"[YOUTUBE] {item['snippet']['title']}\n{desc}")
-except Exception as e:
-    print(f"⚠️ YouTube Error: {e}")
+# --- 5. YOUTUBE DEEP-DIVE (Transcripts) ---
+print("📺 Extracting Prompts from YouTube Transcripts...")
+search_queries = ["best chatgpt prompts 2026", "secret claude prompts", "advanced prompt engineering"]
 
-# --- 5. THE GEMINI CLEANER (AI Formatting) ---
-print(f"🧠 Processing {len(raw_data_firehose)} raw sources with Gemini...")
-final_database = []
+for query in search_queries:
+    try:
+        yt_res = youtube.search().list(q=query, part="snippet", type="video", maxResults=5).execute()
+        for item in yt_res['items']:
+            v_id = item['id']['videoId']
+            title = item['snippet']['title']
+            
+            # Try to get Transcript
+            try:
+                transcript_list = YouTubeTranscriptApi.get_transcript(v_id)
+                transcript_text = " ".join([t['text'] for t in transcript_list])
+                raw_data_firehose.append({"source": "youtube", "text": f"{title} {transcript_text}"})
+            except:
+                # Fallback to description if transcript is disabled
+                raw_data_firehose.append({"source": "youtube", "text": f"{title} {item['snippet']['description']}"})
+    except Exception as e:
+        print(f"⚠️ YouTube Error: {e}")
+
+# --- 6. GEMINI INTELLIGENT CLEANER ---
+print(f"🧠 Gemini is processing {len(raw_data_firehose)} raw candidates...")
 
 SYSTEM_PROMPT = """
-You are an expert data extractor. Extract the core AI prompt from the following raw internet text.
-Format your response EXACTLY as a JSON object with these keys:
+Extract the absolute BEST prompt from this text. 
+Remove all conversational filler, "Like and Subscribe" requests, or Reddit intros.
+Format as JSON: 
 {
-    "title": "A catchy title (e.g., 'Viral YouTube Coding Assistant')",
-    "tag": "Career, Coding, Writing, Analysis, or Image Gen",
+    "title": "Short catchy name",
+    "tag": "Coding/Writing/Creative/Career",
     "platforms": ["chatgpt", "claude", "gemini"], 
-    "text": "The actual prompt text, cleaned of all conversational filler."
+    "text": "The full engineered prompt text"
 }
-Output ONLY valid JSON. No markdown formatting, no backticks.
+Output ONLY valid JSON. If no clear prompt exists, return null.
 """
 
-for i, raw_text in enumerate(raw_data_firehose):
+new_prompts = []
+for i, item in enumerate(raw_data_firehose[:40]): # Processing top 40 to avoid API rate limits
     try:
-        res = model.generate_content(SYSTEM_PROMPT + "\n\nRAW TEXT:\n" + raw_text)
-        cleaned_json = res.text.replace('```json', '').replace('```', '').strip()
-        prompt_data = json.loads(cleaned_json)
-        prompt_data["id"] = i + 1
-        final_database.append(prompt_data)
-        time.sleep(2) # Respect rate limits
-    except Exception as e:
-        print(f"⚠️ Failed to parse item {i}: {e}")
+        response = model.generate_content(f"{SYSTEM_PROMPT}\n\nRAW TEXT: {item['text'][:5000]}")
+        cleaned = response.text.replace('```json', '').replace('```', '').strip()
+        
+        if "null" in cleaned.lower() and len(cleaned) < 10: continue
+        
+        p_data = json.loads(cleaned)
+        p_data["id"] = int(time.time()) + i
+        p_data["source"] = item["source"]
+        new_prompts.append(p_data)
+        time.sleep(1) # Safety delay
+    except: continue
 
-# --- 6. OVERWRITE CLOUD DATABASE ---
-if final_database:
-    os.makedirs("database", exist_ok=True)
-    with open("database/prompts.json", "w", encoding="utf-8") as f:
-        json.dump(final_database, f, indent=4)
-    print(f"✅ Successfully updated database with {len(final_database)} Omni-Channel prompts!")
-else:
-    print("❌ No prompts were extracted today.")
+# --- 7. MERGE, DEDUPLICATE & SAVE ---
+existing_db = load_existing_db()
+full_db = existing_db + new_prompts
+
+# Deduplicate based on text content (keep unique prompts only)
+unique_db = {p['text'].lower().strip(): p for p in full_db}.values()
+
+# Sort by newest first and keep the library manageable
+final_list = list(unique_db)[-1000:] # Keep latest 1000 high-quality prompts
+
+os.makedirs("database", exist_ok=True)
+with open(DB_PATH, "w", encoding="utf-8") as f:
+    json.dump(final_list, f, indent=4)
+
+print(f"✅ Mission Accomplished! Library now has {len(final_list)} Real-Time prompts.")
