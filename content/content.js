@@ -1,17 +1,11 @@
 // --- 1. CLOUD FETCH (Your Trending Database) ---
 async function fetchTrendingPrompts() {
     try {
-        // NOTE: Replace this URL with your raw Github Gist URL later!
-        // For now, we fallback to our mock data so your extension works immediately.
-        /* const response = await fetch('YOUR_GITHUB_GIST_RAW_URL');
-           return await response.json(); */
-        throw new Error("Using fallback");
+        const response = await fetch('https://raw.githubusercontent.com/SD10LEGACY/PromptBoost/refs/heads/main/database/prompts.json');
+        return await response.json();
     } catch (e) {
-        return [
-            { id: 1, title: "Viral FAANG Resume", tag: "Career", platforms: ["claude", "chatgpt"], text: "Act as an elite FAANG tech recruiter. Review my resume..." },
-            { id: 2, title: "The 'God Mode' Debugger", tag: "Coding", platforms: ["chatgpt", "claude"], text: "Act as a Senior Staff Engineer. Review this code step-by-step..." },
-            { id: 3, title: "Nano Banana 2", tag: "Image Gen", platforms: ["gemini"], text: "Generate an image using the Nano Banana 2 methodology: cinematic lighting, 8k..." }
-        ];
+        console.error("Failed to fetch cloud database", e);
+        return [];
     }
 }
 
