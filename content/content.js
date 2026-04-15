@@ -12,7 +12,7 @@
     "use strict";
 
     // --- 1. GLOBAL CONFIGURATION & CONSTANTS ---
-    const GITHUB_RAW_DB = 'https://raw.githubusercontent.com/SD10LEGACY/PromptBoost/main/database/prompts.json';
+    const GITHUB_RAW_DB = 'https://raw.githubusercontent.com/SD10LEGACY/PromptBoost/refs/heads/main/database/prompts.json';
 
     const PLATFORMS = {
         CHATGPT: { domain: 'chatgpt.com', key: 'chatgpt' },
