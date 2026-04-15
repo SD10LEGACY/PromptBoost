@@ -1,0 +1,5 @@
+[
+    { "id": 1, "title": "Viral FAANG Resume", "tag": "Career", "platforms":["claude", "chatgpt"], "text": "Act as an elite FAANG tech recruiter. Review my resume..." },
+    { "id": 2, "title": "The 'God Mode' Debugger", "tag": "Coding", "platforms":["chatgpt", "claude"], "text": "Act as a Senior Staff Engineer. Review this code step-by-step..." },
+    { "id": 3, "title": "Nano Banana 2 Prompt", "tag": "Image Gen", "platforms":["gemini"], "text": "Generate an image using the Nano Banana 2 methodology: [Subject], cinematic lighting, 8k resolution..." }
+]
