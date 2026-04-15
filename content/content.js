@@ -19,6 +19,7 @@
         CLAUDE: { domain: 'claude.ai', key: 'claude' },
         GEMINI: { domain: 'gemini.google.com', key: 'gemini' }
     };
+    const DEBUG_MODE = true; // Set to false when publishing to Chrome Store
 
     // --- 2. THE "FUZZY" DEEP INPUT FINDER ---
     // This looks through standard DOM and Shadow Roots to find the active text area.
