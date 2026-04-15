@@ -1,22 +1,35 @@
 import os
 import json
 import time
-import requests
+import praw
 import google.generativeai as genai
 from googleapiclient.discovery import build
-from youtube_transcript_api import YouTubeTranscriptApi
+import youtube_transcript_api
 
+# --- 1. CONFIGURATION & SECRETS ---
 GEMINI_KEY = os.getenv("GEMINI_API_KEY")
 YOUTUBE_KEY = os.getenv("YOUTUBE_API_KEY")
+REDDIT_ID = os.getenv("REDDIT_CLIENT_ID")
+REDDIT_SECRET = os.getenv("REDDIT_CLIENT_SECRET")
+
 DB_PATH = "database/prompts.json"
 
-if not all([GEMINI_KEY, YOUTUBE_KEY]):
+if not all([GEMINI_KEY, YOUTUBE_KEY, REDDIT_ID, REDDIT_SECRET]):
     print("❌ API Keys missing. Check GitHub Secrets.")
     exit(1)
 
+# Initialize APIs
 genai.configure(api_key=GEMINI_KEY)
 model = genai.GenerativeModel("gemini-1.5-flash")
 youtube_client = build("youtube", "v3", developerKey=YOUTUBE_KEY)
+
+# Initialize Official Reddit API Wrapper
+reddit = praw.Reddit(
+    client_id=REDDIT_ID,
+    client_secret=REDDIT_SECRET,
+    user_agent="script:PromptBoost:v3.0 (by /u/your_reddit_username)" # IMPORTANT: It requires any username here
+)
+
 raw_data_firehose = []
 
 def load_existing_db():
@@ -26,36 +39,26 @@ def load_existing_db():
         except: return []
     return []
 
+# --- 2. AUTHENTICATED REDDIT HARVESTER ---
 def harvest_reddit():
-    print("🕵️ Harvesting Reddit Trends...")
+    print("🕵️ Harvesting Reddit Trends (Authenticated)...")
     subs = ["PromptEngineering", "ChatGPTPro", "ClaudeAI"]
-    # HEAVY DUTY BROWSER DISGUISE
-    headers = {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36',
-        'Accept': 'application/json'
-    }
     
     for sub in subs:
         try:
-            url = f"https://www.reddit.com/r/{sub}/top.json?t=week&limit=15"
-            res = requests.get(url, headers=headers)
-            
-            if res.status_code == 200:
-                posts = res.json()['data']['children']
-                for post in posts:
-                    p = post['data']
-                    content = f"TITLE: {p.get('title')} \nTEXT: {p.get('selftext')}"
-                    if len(content) > 150:
-                        raw_data_firehose.append({"source": "reddit", "text": content})
-                print(f"✅ Reddit r/{sub}: Success!")
-            else:
-                print(f"⚠️ Reddit r/{sub} Blocked Us! Status Code: {res.status_code}")
+            subreddit = reddit.subreddit(sub)
+            # Fetch top 15 posts from the past week
+            for post in subreddit.top(time_filter="week", limit=15):
+                content = f"TITLE: {post.title} \nTEXT: {post.selftext}"
+                if len(content) > 150:
+                    raw_data_firehose.append({"source": "reddit", "text": content})
+            print(f"✅ Reddit r/{sub}: Successfully extracted via API!")
         except Exception as e:
-            print(f"⚠️ Reddit Crash: {e}")
+            print(f"⚠️ Reddit Auth Error (r/{sub}): {e}")
 
+# --- 3. BULLETPROOF YOUTUBE HARVESTER ---
 def harvest_youtube():
     print("📺 Listening to YouTube Transcripts...")
-    # BROADENED SEARCH QUERIES
     queries = ["chatgpt prompts", "claude 3 prompts", "prompt engineering guide"]
     
     for q in queries:
@@ -65,7 +68,8 @@ def harvest_youtube():
                 v_id = item['id'].get('videoId')
                 if not v_id: continue
                 try:
-                    transcript = YouTubeTranscriptApi.get_transcript(v_id)
+                    # Explicit module calling to avoid namespace crashes
+                    transcript = youtube_transcript_api.YouTubeTranscriptApi.get_transcript(v_id)
                     text = " ".join([t['text'] for t in transcript])
                     raw_data_firehose.append({"source": "youtube", "text": text})
                     print(f"✅ YouTube Video Extracted: {v_id}")
@@ -74,6 +78,7 @@ def harvest_youtube():
         except Exception as e:
             print(f"⚠️ YouTube Search Failed: {e}")
 
+# --- 4. GEMINI CLEANING ENGINE ---
 def process_with_ai():
     print(f"🧠 Gemini processing {len(raw_data_firehose)} raw candidates...")
     if len(raw_data_firehose) == 0:
