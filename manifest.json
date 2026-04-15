@@ -1,0 +1,39 @@
+{
+  "manifest_version": 3,
+  "name": "Prompt Boost",
+  "version": "1.0",
+  "description": "On-device prompt engineering using Chrome's built-in AI.",
+  "permissions": [
+    "storage",
+    "activeTab"
+  ],
+  "host_permissions": [
+    "https://chatgpt.com/*",
+    "https://claude.ai/*",
+    "https://gemini.google.com/*"
+  ],
+  "action": {
+    "default_icon": "icon.png"
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://chatgpt.com/*",
+        "https://claude.ai/*",
+        "https://gemini.google.com/*"
+      ],
+      "js": [
+        "content/content.js"
+      ],
+      "css": [
+        "content/style.css"
+      ]
+    }
+  ],
+  "icons": {
+    "128": "icon.png"
+  }
+}
