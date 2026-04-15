@@ -7,10 +7,10 @@
 <img src="https://capsule-render.vercel.app/api?type=waving&color=0:0d1117,35:063b35,70:10a37f,100:0d1117&height=300&section=header&text=⚡%20PromptBoost&fontSize=82&fontAlignY=42&fontColor=ffffff&desc=The%20On-Device%20Prompt%20Engineering%20Engine&descAlignY=62&descSize=24&animation=fadeIn&stroke=10a37f&strokeWidth=2" width="100%" alt="PromptBoost Header"/>
 
 <!-- ══════════════════════════════════════════════════════ -->
-<!--                  TYPING ANIMATION (FIXED)              -->
+<!--                  TYPING ANIMATION                      -->
 <!-- ══════════════════════════════════════════════════════ -->
 
-[](https://github.com/SD10LEGACY/PromptBoost)
+<img src="https://readme-typing-svg.demolab.com?font=JetBrains+Mono&weight=600&size=18&duration=2800&pause=900&color=10A37F&center=true&vCenter=true&multiline=false&repeat=true&width=720&height=48&lines=🧠+On-Device+Inference+via+Chrome's+Built-In+Gemini+Nano;⚡+Zero+API+Keys.+Zero+Latency.+Zero+Data+Leakage.;🔒+Your+Keystrokes+Never+Leave+Your+Machine.;📐+CO-STAR+%26+ReAct+Prompt+Frameworks+On+the+Fly.;🎨+Bauhaus+Constructivist+UI+—+Pure+Vanilla+CSS." alt="Typing SVG Animation" />
 
 <br><br>
 
@@ -248,10 +248,10 @@ Please follow [Conventional Commits](https://www.conventionalcommits.org/) for c
 <div align="center">
 
 <!-- ══════════════════════════════════════════════════════ -->
-<!--                    FOOTER ANIMATION (FIXED)            -->
+<!--                    FOOTER ANIMATION                    -->
 <!-- ══════════════════════════════════════════════════════ -->
 
-[
+<img src="https://readme-typing-svg.demolab.com?font=JetBrains+Mono&weight=500&size=15&duration=4000&pause=1500&color=10A37F&center=true&vCenter=true&multiline=false&repeat=true&width=600&height=40&lines=Built+with+☕+and+On-Device+AI+by+Shreyojit.;Privacy+is+not+a+feature.+It's+the+foundation." alt="Footer Typing SVG" />
 
 <br>
 
