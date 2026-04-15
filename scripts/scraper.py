@@ -6,7 +6,6 @@ import google.generativeai as genai
 from googleapiclient.discovery import build
 from youtube_transcript_api import YouTubeTranscriptApi
 
-# --- 1. CONFIGURATION ---
 GEMINI_KEY = os.getenv("GEMINI_API_KEY")
 YOUTUBE_KEY = os.getenv("YOUTUBE_API_KEY")
 DB_PATH = "database/prompts.json"
@@ -28,27 +27,28 @@ def load_existing_db():
         except: return []
     return []
 
-# --- 2. THE HARVESTERS (No Authentication Required!) ---
-
 def harvest_youtube():
     print("📺 Sweeping YouTube Transcripts...")
     queries = ["best chatgpt prompts 2026", "advanced claude prompts", "prompt engineering tutorial"]
     for q in queries:
         try:
             search = youtube_client.search().list(q=q, part="snippet", type="video", maxResults=3).execute()
-            for item in search.get('items', []):
+            items = search.get('items', [])
+            if not items:
+                print(f"  ⚠️ No videos found for query: {q}")
+            for item in items:
                 v_id = item['id'].get('videoId')
                 if not v_id: continue
                 try:
                     transcript = YouTubeTranscriptApi.get_transcript(v_id)
                     text = " ".join([t['text'] for t in transcript])
                     raw_data_firehose.append({"source": "youtube", "text": f"Title: {item['snippet']['title']} Text: {text}"})
-                except: continue
-        except Exception as e: print(f"⚠️ YouTube Search Failed: {e}")
+                    print(f"✅ YouTube Transcript Extracted: {item['snippet']['title']}")
+                except: pass
+        except Exception as e: print(f"⚠️ YouTube API Error: {e}")
 
 def harvest_hackernews():
     print("🟧 Sweeping Hacker News (Algolia API)...")
-    # HN has a free, unblockable search API
     url = "https://hn.algolia.com/api/v1/search?query=AI+prompt+engineering&tags=story&hitsPerPage=5"
     try:
         res = requests.get(url).json()
@@ -61,12 +61,10 @@ def harvest_hackernews():
 
 def harvest_devto():
     print("👩‍💻 Sweeping Dev.to Articles...")
-    # Dev.to has a free, open API for developers
     url = "https://dev.to/api/articles?tag=promptengineering&top=7"
     try:
         res = requests.get(url).json()
         for article in res[:5]:
-            # We fetch the full article body using its ID
             article_url = f"https://dev.to/api/articles/{article['id']}"
             full_article = requests.get(article_url).json()
             content = f"Title: {full_article.get('title')} Text: {full_article.get('body_markdown')}"
@@ -74,13 +72,14 @@ def harvest_devto():
             print(f"✅ Dev.to Article Extracted: {full_article.get('title')}")
     except Exception as e: print(f"⚠️ Dev.to Failed: {e}")
 
-# --- 3. GEMINI CLEANING ENGINE ---
 def process_with_ai():
-    print(f"🧠 Gemini processing {len(raw_data_firehose)} raw data streams...")
+    print(f"\n🧠 Gemini processing {len(raw_data_firehose)} raw data streams...")
     if len(raw_data_firehose) == 0: return []
 
     SYSTEM_PROMPT = """You are a Staff Prompt Engineer. Read this text from a blog, video, or forum. Extract the single most actionable, complete AI prompt mentioned. 
-Output ONLY raw valid JSON:
+If the text is just an article talking ABOUT AI, and doesn't actually contain a copy-paste prompt, reply ONLY with the word: SKIP
+
+Otherwise, output ONLY raw valid JSON:
 {
     "title": "Short Catchy Name",
     "tag": "Coding | Writing | Creative | Productivity",
@@ -90,22 +89,34 @@ Output ONLY raw valid JSON:
 
     refined_list = []
     for i, item in enumerate(raw_data_firehose[:25]): 
+        print(f"  🤖 Sending Item {i+1} ({item['source']}) to Gemini...")
         try:
             response = model.generate_content(f"{SYSTEM_PROMPT}\n\n<text>\n{item['text'][:6000]}\n</text>")
-            raw_text = response.text.strip().replace("```json", "").replace("```", "").strip()
+            raw_text = response.text.strip()
             
-            p_data = json.loads(raw_text)
-            p_data["id"] = int(time.time()) + i
-            p_data["source"] = item["source"]
+            if "SKIP" in raw_text.upper():
+                print("    ⏭️ Skipped: No actionable prompt found in this article.")
+                continue
+
+            clean_text = raw_text.replace("```json", "").replace("```", "").strip()
             
-            if "title" in p_data and "text" in p_data:
-                refined_list.append(p_data)
-                print(f"  ✨ Saved Prompt from {item['source'].upper()}: {p_data['title']}")
-        except: continue
+            try:
+                p_data = json.loads(clean_text)
+                p_data["id"] = int(time.time()) + i
+                p_data["source"] = item["source"]
+                
+                if "title" in p_data and "text" in p_data:
+                    refined_list.append(p_data)
+                    print(f"    ✨ Saved Prompt: {p_data['title']}")
+            except json.JSONDecodeError:
+                print(f"    ❌ JSON Decode Error. Gemini output was: {clean_text[:100]}...")
+                
+        except Exception as e: 
+            print(f"    ❌ Gemini API Crash: {e}")
+            
         time.sleep(2) 
     return refined_list
 
-# --- 4. EXECUTION & SYNC ---
 if __name__ == "__main__":
     harvest_youtube()
     harvest_hackernews()
@@ -114,7 +125,6 @@ if __name__ == "__main__":
     new_prompts = process_with_ai()
     existing_prompts = load_existing_db()
     
-    # Merge and Deduplicate
     full_library = existing_prompts + new_prompts
     unique_db = {p['text'].lower().strip(): p for p in full_library}.values()
     
@@ -122,4 +132,4 @@ if __name__ == "__main__":
     with open(DB_PATH, "w", encoding="utf-8") as f:
         json.dump(list(unique_db)[-1000:], f, indent=4)
     
-    print(f"✅ Pipeline Complete! Total unique prompts: {len(unique_db)}")
+    print(f"\n✅ Pipeline Complete! Total unique prompts: {len(unique_db)}")
