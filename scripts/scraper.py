@@ -2,27 +2,20 @@ import os
 import json
 import time
 import requests
-import google.generativeai as genai
+from google import genai
 from googleapiclient.discovery import build
 from youtube_transcript_api import YouTubeTranscriptApi
 
-# --- 1. INITIALIZATION & SECURE KEYS ---
-# These are pulled from your GitHub Secrets
 GEMINI_KEY = os.getenv("GEMINI_API_KEY")
 YOUTUBE_KEY = os.getenv("YOUTUBE_API_KEY")
 DB_PATH = "database/prompts.json"
 
 if not all([GEMINI_KEY, YOUTUBE_KEY]):
-    print("❌ API Keys missing in environment. Check GitHub Secrets.")
+    print("API Keys missing. Check GitHub Secrets.")
     exit(1)
 
-# Configure Gemini (Big Brain Cloud Version)
-genai.configure(api_key=GEMINI_KEY)
-model = genai.GenerativeModel('gemini-1.5-flash')
-
-# Configure YouTube
-youtube_client = build('youtube', 'v3', developerKey=YOUTUBE_KEY)
-
+client = genai.Client(api_key=GEMINI_KEY)
+youtube_client = build("youtube", "v3", developerKey=YOUTUBE_KEY)
 raw_data_firehose = []
 
 # --- 2. PERSISTENCE ENGINE ---
@@ -79,36 +72,71 @@ def harvest_youtube():
         except Exception as e:
             print(f"⚠️ YouTube Search Error: {e}")
 
-# --- 5. THE GEMINI CLEANING ENGINE ---
+# --- 5. GEMINI CLEANING ENGINE ---
 def process_with_ai():
-    print(f"🧠 Gemini is cleaning {len(raw_data_firehose)} raw candidates...")
-    
-    SYSTEM_PROMPT = """
-    You are a Staff Prompt Engineer. Extract the BEST high-performance AI prompt from this text.
-    Ignore 'Subscribe' calls, Reddit intros, or conversational fluff.
-    Format your response ONLY as valid JSON:
-    {
-        "title": "Short Catchy Name",
-        "tag": "Coding/Writing/Creative/Career",
-        "platforms": ["chatgpt", "claude", "gemini"], 
-        "text": "The full engineered prompt text"
-    }
-    """
-    
+    print(f"Gemini processing {len(raw_data_firehose)} raw candidates...")
+
+    SYSTEM_PROMPT = """You are a Staff Prompt Engineer. Your job is to extract the single best, 
+high-performance AI prompt from the raw text provided.
+
+Rules:
+- IGNORE: Subscribe calls, Reddit/YouTube intros, conversational filler, self-promotion
+- EXTRACT: The most actionable, reusable prompt a user could paste into ChatGPT, Claude, or Gemini
+- If no usable prompt exists in the text, respond with exactly: SKIP
+
+Output ONLY raw valid JSON — no markdown, no code fences, no explanation:
+{
+    "title": "Short Catchy Name (max 6 words)",
+    "tag": "Coding | Writing | Creative | Career | Research | Productivity",
+    "platforms": ["chatgpt", "claude", "gemini"],
+    "text": "The complete, copy-paste ready engineered prompt"
+}"""
+
     refined_list = []
-    # Process top 30 to stay within free-tier rate limits
+    total        = min(len(raw_data_firehose), 30)
+
     for i, item in enumerate(raw_data_firehose[:30]):
         try:
-            response = model.generate_content(f"{SYSTEM_PROMPT}\n\nRAW TEXT:\n{item['text'][:5000]}")
-            # Remove markdown code blocks if Gemini includes them
-            clean_json = response.text.replace('```json', '').replace('```', '').strip()
-            
-            p_data = json.loads(clean_json)
-            p_data["id"] = int(time.time()) + i
-            p_data["source"] = item["source"]
-            refined_list.append(p_data)
-            time.sleep(1) # Safety delay
-        except: continue
+            response = client.models.generate_content(
+                model    = "gemini-2.0-flash",
+                contents = f"{SYSTEM_PROMPT}\n\n<raw_text>\n{item['text'][:5000]}\n</raw_text>"
+            )
+
+            raw_text = response.text.strip()
+
+            # Skip if Gemini signals no usable prompt
+            if raw_text.upper().startswith("SKIP"):
+                print(f"  [{i+1}/{total}] Skipped — no usable prompt found")
+                time.sleep(1)
+                continue
+
+            # Strip any markdown fences Gemini may still include
+            clean_json = (
+                raw_text
+                .replace("```json", "")
+                .replace("```", "")
+                .strip()
+            )
+
+            p_data            = json.loads(clean_json)
+            p_data["id"]      = int(time.time()) + i
+            p_data["source"]  = item["source"]
+
+            # Validate required fields before saving
+            if all(k in p_data for k in ("title", "tag", "text", "platforms")):
+                refined_list.append(p_data)
+                print(f"  [{i+1}/{total}] Saved: {p_data['title']}")
+            else:
+                print(f"  [{i+1}/{total}] Dropped — missing required fields")
+
+        except json.JSONDecodeError:
+            print(f"  [{i+1}/{total}] Dropped — invalid JSON from Gemini")
+        except Exception as e:
+            print(f"  [{i+1}/{total}] Error: {e}")
+
+        time.sleep(1)  # Stay within free-tier rate limits (15 RPM)
+
+    print(f"Extracted {len(refined_list)} valid prompts from {total} candidates")
     return refined_list
 
 # --- 6. EXECUTION & SYNC ---
