@@ -2,8 +2,8 @@ name: Auto-Scrape Trending Prompts
 
 on:
   schedule:
-    - cron: "0 */6 * * *"
-  workflow_dispatch:
+    - cron: "0 */6 * * *" # Every 6 hours
+  workflow_dispatch: # Manual run
 
 jobs:
   scrape-and-update:
@@ -15,21 +15,17 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Set Up Python 3.11
+      - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: "3.11"
 
       - name: Install Dependencies
         run: |
-          pip install --upgrade pip
-          pip uninstall -y google-generativeai || true
+          python -m pip install --upgrade pip
           pip install requests \
-                      google-genai \
-                      google-api-python-client \
-                      google-auth-httplib2 \
-                      google-auth-oauthlib \
-                      youtube-transcript-api
+            google-api-python-client \
+            youtube-transcript-api
 
       - name: Run Scraper
         env:

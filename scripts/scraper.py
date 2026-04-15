@@ -2,7 +2,6 @@ import os
 import json
 import time
 import requests
-import google.generativeai as genai
 from googleapiclient.discovery import build
 from youtube_transcript_api import YouTubeTranscriptApi
 
@@ -19,10 +18,6 @@ if not all([GEMINI_KEY, YOUTUBE_KEY]):
     print("❌ Critical API Keys missing. Check GitHub Secrets.")
     exit(1)
 
-# STABLE CONFIGURATION
-genai.configure(api_key=GEMINI_KEY)
-model = genai.GenerativeModel("gemini-1.5-flash")
-
 youtube_client = build("youtube", "v3", developerKey=YOUTUBE_KEY)
 raw_data_firehose = []
 
@@ -33,29 +28,11 @@ def load_existing_db():
         except: return []
     return []
 
-def harvest_reddit():
-    print("🕵️ Harvesting Reddit Trends...")
-    subs = ["PromptEngineering", "ChatGPTPro", "ClaudeAI"]
-    headers = {'User-Agent': 'PromptBoost/3.0'}
-    
-    for sub in subs:
-        try:
-            url = f"https://www.reddit.com/r/{sub}/top.json?t=week&limit=25"
-            res = requests.get(url, headers=headers)
-            if res.status_code == 200:
-                posts = res.json()['data']['children']
-                for post in posts:
-                    p = post['data']
-                    content = f"TITLE: {p.get('title')} \nTEXT: {p.get('selftext')}"
-                    if len(content) > 200:
-                        raw_data_firehose.append({"source": "reddit", "text": content})
-        except Exception as e:
-            print(f"⚠️ Reddit Error: {e}")
+# --- 2. THE HARVESTERS ---
 
 def harvest_youtube():
-    print("📺 Listening to YouTube Transcripts...")
-    queries = ["best ai prompts 2026", "advanced prompt engineering"]
-    
+    print("📺 Sweeping YouTube Transcripts...")
+    queries = ["best chatgpt prompts 2026", "advanced claude prompts"]
     for q in queries:
         try:
             search = youtube_client.search().list(q=q, part="snippet", type="video", maxResults=3).execute()
@@ -65,19 +42,85 @@ def harvest_youtube():
                 try:
                     transcript = YouTubeTranscriptApi.get_transcript(v_id)
                     text = " ".join([t['text'] for t in transcript])
-                    raw_data_firehose.append({"source": "youtube", "text": text})
-                except: continue
-        except: continue
+                    raw_data_firehose.append({"source": "youtube", "text": f"Title: {item['snippet']['title']} Text: {text}"})
+                    print(f"✅ YouTube Extracted: {item['snippet']['title']}")
+                except: pass
+        except Exception as e: print(f"⚠️ YouTube API Error: {e}")
+
+def harvest_hackernews():
+    print("🟧 Sweeping Hacker News...")
+    url = "https://hn.algolia.com/api/v1/search?query=AI+prompt+engineering&tags=story&hitsPerPage=5"
+    try:
+        res = requests.get(url).json()
+        for hit in res.get('hits', []):
+            content = f"Title: {hit.get('title')} Text: {hit.get('story_text', '')}"
+            raw_data_firehose.append({"source": "hacker_news", "text": content})
+    except: pass
+
+def harvest_devto():
+    print("👩‍💻 Sweeping Dev.to...")
+    url = "https://dev.to/api/articles?tag=promptengineering&top=5"
+    try:
+        res = requests.get(url).json()
+        for article in res:
+            full = requests.get(f"https://dev.to/api/articles/{article['id']}").json()
+            raw_data_firehose.append({"source": "dev_to", "text": full.get('body_markdown')})
+    except: pass
+
+# --- 3. THE AI ENGINE ROTATION (THE BRAIN) ---
+
+def ask_gemini(prompt, text):
+    url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key={GEMINI_KEY}"
+    payload = {"contents": [{"parts": [{"text": f"{prompt}\n\n<text>\n{text[:6000]}\n</text>"}]}]}
+    res = requests.post(url, json=payload, timeout=10)
+    if res.status_code == 200:
+        return res.json()['candidates'][0]['content']['parts'][0]['text']
+    raise Exception(f"Gemini Error {res.status_code}")
+
+def ask_groq(prompt, text):
+    if not GROQ_KEY: raise Exception("No Key")
+    url = "https://api.groq.com/openai/v1/chat/completions"
+    headers = {"Authorization": f"Bearer {GROQ_KEY}", "Content-Type": "application/json"}
+    payload = {
+        "model": "llama-3.3-70b-versatile",
+        "messages": [{"role": "user", "content": f"{prompt}\n\n<text>\n{text[:6000]}\n</text>"}]
+    }
+    res = requests.post(url, headers=headers, json=payload, timeout=10)
+    return res.json()['choices'][0]['message']['content']
+
+def ask_mistral(prompt, text):
+    if not MISTRAL_KEY: raise Exception("No Key")
+    url = "https://api.mistral.ai/v1/chat/completions"
+    headers = {"Authorization": f"Bearer {MISTRAL_KEY}", "Content-Type": "application/json"}
+    payload = {
+        "model": "mistral-small-latest",
+        "messages": [{"role": "user", "content": f"{prompt}\n\n<text>\n{text[:6000]}\n</text>"}]
+    }
+    res = requests.post(url, headers=headers, json=payload, timeout=10)
+    return res.json()['choices'][0]['message']['content']
+
+def ask_openrouter(prompt, text):
+    if not OPENROUTER_KEY: raise Exception("No Key")
+    url = "https://openrouter.ai/api/v1/chat/completions"
+    headers = {"Authorization": f"Bearer {OPENROUTER_KEY}", "Content-Type": "application/json"}
+    payload = {
+        "model": "meta-llama/llama-3.1-8b-instruct:free",
+        "messages": [{"role": "user", "content": f"{prompt}\n\n<text>\n{text[:6000]}\n</text>"}]
+    }
+    res = requests.post(url, headers=headers, json=payload, timeout=10)
+    return res.json()['choices'][0]['message']['content']
 
 def process_with_ai():
-    print(f"🧠 Gemini processing {len(raw_data_firehose)} raw candidates...")
-    SYSTEM_PROMPT = """Extract the single best AI prompt from the text.
-Output ONLY raw valid JSON:
+    print(f"\n🧠 Processing {len(raw_data_firehose)} items with AI Rotation...")
+    
+    SYSTEM_PROMPT = """You are a Staff Prompt Engineer. Extract the single most actionable AI prompt. 
+If no prompt exists, reply ONLY: SKIP. 
+Otherwise, output ONLY raw valid JSON:
 {
     "title": "Short Name",
-    "tag": "Coding",
+    "tag": "Coding | Writing | Creative",
     "platforms": ["chatgpt", "claude", "gemini"],
-    "text": "The prompt"
+    "text": "The full engineered prompt"
 }"""
 
     engines = [
@@ -88,22 +131,38 @@ Output ONLY raw valid JSON:
     ]
 
     refined_list = []
-    for i, item in enumerate(raw_data_firehose[:25]):
-        try:
-            response = model.generate_content(f"{SYSTEM_PROMPT}\n\n<text>\n{item['text'][:4000]}\n</text>")
-            raw_text = response.text.strip().replace("```json", "").replace("```", "").strip()
-            
-            p_data = json.loads(raw_text)
-            p_data["id"] = int(time.time()) + i
-            p_data["source"] = item["source"]
-            
-            if "title" in p_data and "text" in p_data:
+    for i, item in enumerate(raw_data_firehose[:20]):
+        print(f"  🤖 Item {i+1}: ", end="")
+        success = False
+        
+        for engine in engines:
+            try:
+                raw_text = engine['func'](SYSTEM_PROMPT, item['text'])
+                
+                if "SKIP" in raw_text.upper():
+                    print(f"⏭️ Skipped via {engine['name']}")
+                    success = True
+                    break
+
+                clean_text = raw_text.replace("```json", "").replace("```", "").strip()
+                p_data = json.loads(clean_text)
+                p_data["id"] = int(time.time()) + i
+                p_data["source"] = item["source"]
+                
                 refined_list.append(p_data)
-                print(f"  Saved: {p_data['title']}")
-        except: continue
-        time.sleep(1.5)
+                print(f"✨ Saved via {engine['name']} ({p_data['title']})")
+                success = True
+                break # Move to next item in firehose
+            except Exception as e:
+                continue # Try next engine
+        
+        if not success:
+            print("❌ All engines failed or out of quota.")
+        time.sleep(2) # Global throttle
+        
     return refined_list
 
+# --- 4. EXECUTION ---
 if __name__ == "__main__":
     harvest_youtube()
     harvest_hackernews()
@@ -112,11 +171,10 @@ if __name__ == "__main__":
     new_prompts = process_with_ai()
     existing = load_existing_db()
     
-    full_library = existing_prompts + new_prompts
-    unique_db = {p['text'].lower().strip(): p for p in full_library}.values()
+    unique_db = {p['text'].lower().strip(): p for p in existing + new_prompts}.values()
     
     os.makedirs("database", exist_ok=True)
     with open(DB_PATH, "w", encoding="utf-8") as f:
         json.dump(list(unique_db)[-1000:], f, indent=4)
     
-    print(f"✅ Mission Accomplished! Library size: {len(unique_db)}")
+    print(f"\n✅ Pipeline Complete! Library size: {len(unique_db)}")
