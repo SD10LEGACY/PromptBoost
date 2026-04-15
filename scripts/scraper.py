@@ -2,7 +2,7 @@ import os
 import json
 import time
 import requests
-from google import genai
+import google.generativeai as genai # FIXED IMPORT
 from googleapiclient.discovery import build
 from youtube_transcript_api import YouTubeTranscriptApi
 
@@ -14,7 +14,10 @@ if not all([GEMINI_KEY, YOUTUBE_KEY]):
     print("API Keys missing. Check GitHub Secrets.")
     exit(1)
 
-client = genai.Client(api_key=GEMINI_KEY)
+# FIXED CONFIGURATION
+genai.configure(api_key=GEMINI_KEY)
+model = genai.GenerativeModel("gemini-1.5-flash") # Highly stable for extraction tasks
+
 youtube_client = build("youtube", "v3", developerKey=YOUTUBE_KEY)
 raw_data_firehose = []
 
@@ -74,7 +77,7 @@ def harvest_youtube():
 
 # --- 5. GEMINI CLEANING ENGINE ---
 def process_with_ai():
-    print(f"Gemini processing {len(raw_data_firehose)} raw candidates...")
+    print(f"🧠 Gemini processing {len(raw_data_firehose)} raw candidates...")
 
     SYSTEM_PROMPT = """You are a Staff Prompt Engineer. Your job is to extract the single best, 
 high-performance AI prompt from the raw text provided.
@@ -97,9 +100,9 @@ Output ONLY raw valid JSON — no markdown, no code fences, no explanation:
 
     for i, item in enumerate(raw_data_firehose[:30]):
         try:
-            response = client.models.generate_content(
-                model    = "gemini-2.0-flash",
-                contents = f"{SYSTEM_PROMPT}\n\n<raw_text>\n{item['text'][:5000]}\n</raw_text>"
+            # FIXED GENERATION CALL
+            response = model.generate_content(
+                f"{SYSTEM_PROMPT}\n\n<raw_text>\n{item['text'][:5000]}\n</raw_text>"
             )
 
             raw_text = response.text.strip()
