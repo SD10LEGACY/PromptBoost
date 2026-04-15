@@ -124,7 +124,7 @@ Otherwise, output ONLY raw valid JSON:
         except Exception as e: 
             print(f"    ❌ Request Crash: {e}")
             
-        time.sleep(2) # Respect Rate Limits
+        time.sleep(5) # Respect Rate Limits
     return refined_list
 
 if __name__ == "__main__":
