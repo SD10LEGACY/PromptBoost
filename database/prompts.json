@@ -1,5 +1,35 @@
 [
-    { "id": 1, "title": "Viral FAANG Resume", "tag": "Career", "platforms":["claude", "chatgpt"], "text": "Act as an elite FAANG tech recruiter. Review my resume..." },
-    { "id": 2, "title": "The 'God Mode' Debugger", "tag": "Coding", "platforms":["chatgpt", "claude"], "text": "Act as a Senior Staff Engineer. Review this code step-by-step..." },
-    { "id": 3, "title": "Nano Banana 2 Prompt", "tag": "Image Gen", "platforms":["gemini"], "text": "Generate an image using the Nano Banana 2 methodology: [Subject], cinematic lighting, 8k resolution..." }
+    {
+        "id": 101,
+        "title": "Universal Coding Architect",
+        "tag": "Coding",
+        "platforms": [
+            "chatgpt",
+            "claude",
+            "gemini"
+        ],
+        "source": "manual",
+        "text": "Act as a Senior Software Engineer. Review the following code for security vulnerabilities, logic errors, and optimization opportunities. Provide a structured report with 'Issue', 'Risk Level', and 'Recommended Fix'. [PASTE CODE HERE]"
+    },
+    {
+        "id": 102,
+        "title": "Viral Thread Generator",
+        "tag": "Marketing",
+        "platforms": [
+            "chatgpt",
+            "claude"
+        ],
+        "source": "reddit",
+        "text": "Transform the following technical article into a 10-post viral X (Twitter) thread. Use the 'Hook-Value-CTA' framework. Ensure each post is under 240 characters and includes a relevant emoji. Article: [INSERT TEXT]"
+    },
+    {
+        "id": 103,
+        "title": "CO-STAR Prompt Optimizer",
+        "tag": "Writing",
+        "platforms": [
+            "all"
+        ],
+        "source": "youtube",
+        "text": "I will provide a rough prompt. Your task is to rewrite it using the CO-STAR framework (Context, Objective, Style, Tone, Audience, Response). Maintain the original intent but maximize clarity and output quality. Draft: [INSERT DRAFT]"
+    }
 ]

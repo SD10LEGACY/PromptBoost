@@ -1,0 +1,4 @@
+requests
+google-genai
+google-api-python-client
+youtube-transcript-api
