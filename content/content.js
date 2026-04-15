@@ -133,3 +133,12 @@ function fillChatBox(text, textarea) {
 
 const observer = new MutationObserver(() => injectUI());
 observer.observe(document.body, { childList: true, subtree: true });
+
+async function checkAIAvailability() {
+    if (typeof window.ai === 'undefined') {
+        // Show a nice UI message instead of just failing
+        showNotification("⚠️ Chrome AI not detected. Please enable flags to use PromptBoost.");
+        return false;
+    }
+    return true;
+}
