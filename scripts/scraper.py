@@ -2,7 +2,6 @@ import os
 import json
 import time
 import requests
-import google.generativeai as genai
 from googleapiclient.discovery import build
 from youtube_transcript_api import YouTubeTranscriptApi
 
@@ -14,10 +13,7 @@ if not all([GEMINI_KEY, YOUTUBE_KEY]):
     print("❌ API Keys missing. Check GitHub Secrets.")
     exit(1)
 
-genai.configure(api_key=GEMINI_KEY)
-model = genai.GenerativeModel("gemini-1.5-flash")
 youtube_client = build("youtube", "v3", developerKey=YOUTUBE_KEY)
-
 raw_data_firehose = []
 
 def load_existing_db():
@@ -88,11 +84,25 @@ Otherwise, output ONLY raw valid JSON:
 }"""
 
     refined_list = []
+    # 🚀 PURE REST API CALL - NO SDK REQUIRED
+    api_url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key={GEMINI_KEY}"
+
     for i, item in enumerate(raw_data_firehose[:25]): 
         print(f"  🤖 Sending Item {i+1} ({item['source']}) to Gemini...")
         try:
-            response = model.generate_content(f"{SYSTEM_PROMPT}\n\n<text>\n{item['text'][:6000]}\n</text>")
-            raw_text = response.text.strip()
+            payload = {
+                "contents": [{"parts": [{"text": f"{SYSTEM_PROMPT}\n\n<text>\n{item['text'][:6000]}\n</text>"}]}],
+                "generationConfig": {"temperature": 0.2}
+            }
+            
+            response = requests.post(api_url, json=payload)
+            
+            if response.status_code != 200:
+                print(f"    ❌ API Error: {response.status_code} - {response.text[:100]}")
+                continue
+                
+            data = response.json()
+            raw_text = data['candidates'][0]['content']['parts'][0]['text'].strip()
             
             if "SKIP" in raw_text.upper():
                 print("    ⏭️ Skipped: No actionable prompt found in this article.")
@@ -109,12 +119,12 @@ Otherwise, output ONLY raw valid JSON:
                     refined_list.append(p_data)
                     print(f"    ✨ Saved Prompt: {p_data['title']}")
             except json.JSONDecodeError:
-                print(f"    ❌ JSON Decode Error. Gemini output was: {clean_text[:100]}...")
+                print(f"    ❌ JSON Decode Error.")
                 
         except Exception as e: 
-            print(f"    ❌ Gemini API Crash: {e}")
+            print(f"    ❌ Request Crash: {e}")
             
-        time.sleep(2) 
+        time.sleep(2) # Respect Rate Limits
     return refined_list
 
 if __name__ == "__main__":
