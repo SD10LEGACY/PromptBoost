@@ -6,7 +6,7 @@ import google.generativeai as genai
 from googleapiclient.discovery import build
 from youtube_transcript_api import YouTubeTranscriptApi
 
-# --- 1. SETUP & AUTH ---
+# --- 1. CONFIGURATION ---
 GEMINI_KEY = os.getenv("GEMINI_API_KEY")
 YOUTUBE_KEY = os.getenv("YOUTUBE_API_KEY")
 DB_PATH = "database/prompts.json"
@@ -15,7 +15,7 @@ if not all([GEMINI_KEY, YOUTUBE_KEY]):
     print("❌ API Keys missing. Check GitHub Secrets.")
     exit(1)
 
-# Configure Gemini API (Cloud)
+# Configure the Cloud Gemini API
 genai.configure(api_key=GEMINI_KEY)
 model = genai.GenerativeModel('gemini-1.5-flash')
 
@@ -26,25 +26,27 @@ raw_data_firehose = []
 def load_db():
     if os.path.exists(DB_PATH):
         try:
-            with open(DB_PATH, "r", encoding="utf-8") as f: return json.load(f)
+            with open(DB_PATH, "r", encoding="utf-8") as f:
+                return json.load(f)
         except: return []
     return []
 
 # --- 2. THE HARVESTERS ---
-print("🕵️ Harvesting Reddit...")
+print("🕵️ Harvesting Reddit Trends...")
 subs = ["PromptEngineering", "ChatGPTPro", "ClaudeAI", "OpenAI", "Midjourney"]
 for sub in subs:
     try:
-        url = f"https://www.reddit.com/r/{sub}/top.json?t=week&limit=40"
+        url = f"https://www.reddit.com/r/{sub}/top.json?t=week&limit=35"
         res = requests.get(url, headers={'User-Agent': 'PromptBoost/3.0'})
         if res.status_code == 200:
             for post in res.json()['data']['children']:
                 p = post['data']
                 content = f"{p.get('title')} {p.get('selftext')}"
-                if len(content) > 200: raw_data_firehose.append({"source": "reddit", "text": content})
+                if len(content) > 150:
+                    raw_data_firehose.append({"source": "reddit", "text": content})
     except: continue
 
-print("📺 Extracting YouTube Transcripts...")
+print("📺 Listening to YouTube Transcripts...")
 queries = ["best chatgpt prompts 2026", "advanced prompt engineering", "ai prompt hacks"]
 for q in queries:
     try:
@@ -60,22 +62,23 @@ for q in queries:
                 raw_data_firehose.append({"source": "youtube", "text": item['snippet']['description']})
     except: continue
 
-# --- 3. THE CLEANING ENGINE ---
-print(f"🧠 Gemini is processing {len(raw_data_firehose)} candidates...")
+# --- 3. THE GEMINI CLEANING ENGINE ---
+print(f"🧠 Gemini is processing {len(raw_data_firehose)} raw candidates...")
 final_list = []
 SYSTEM_PROMPT = "Extract the best AI prompt. Return ONLY valid JSON: {'title', 'tag', 'platforms', 'text'}. No filler."
 
-for i, item in enumerate(raw_data_firehose[:35]):
+for i, item in enumerate(raw_data_firehose[:30]):
     try:
         response = model.generate_content(f"{SYSTEM_PROMPT}\n\nRAW TEXT: {item['text'][:5000]}")
+        # Strip backticks if Gemini adds them
         clean_json = response.text.replace('```json', '').replace('```', '').strip()
         data = json.loads(clean_json)
         data.update({"id": int(time.time()) + i, "source": item["source"]})
         final_list.append(data)
-        time.sleep(1) # Respect Rate Limits
+        time.sleep(1) # Stay under free-tier limits
     except: continue
 
-# --- 4. SYNC ---
+# --- 4. MERGE & SAVE ---
 existing = load_db()
 all_prompts = existing + final_list
 unique = {p['text'].lower().strip(): p for p in all_prompts}.values()
@@ -83,4 +86,4 @@ unique = {p['text'].lower().strip(): p for p in all_prompts}.values()
 os.makedirs("database", exist_ok=True)
 with open(DB_PATH, "w", encoding="utf-8") as f:
     json.dump(list(unique)[-1000:], f, indent=4)
-print(f"✅ Library synced. Size: {len(unique)}")
+print(f"✅ Library synced. Size: {len(unique)} prompts.")
