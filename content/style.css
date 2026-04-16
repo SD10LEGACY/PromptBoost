@@ -340,3 +340,210 @@ body.pb-platform-gemini {
 }
 
 /* 🏁 END OF 300 LINE MASTER STYLESHEET */
+/* --- PERPLEXITY --- */
+body.pb-platform-perplexity {
+    --pb-accent: #20B2AA;
+    --pb-accent-soft: rgba(32, 178, 170, 0.1);
+    --pb-radius: 12px;
+}
+
+/* --- GROK --- */
+body.pb-platform-grok {
+    --pb-accent: #1DA1F2;
+    --pb-accent-soft: rgba(29, 161, 242, 0.1);
+    --pb-radius: 16px;
+}
+
+/* --- UI FIXES & UPGRADES --- */
+
+/* Fix 1: The Invisible Button */
+.pb-use-btn {
+    width: 100%;
+    background: var(--pb-white);
+    border: 3px solid var(--pb-fg);
+    color: var(--pb-fg);
+    /* 🟢 ADDED: Fixes white-on-white text */
+    padding: 12px;
+    font-family: var(--pb-font);
+    font-weight: 900;
+    text-transform: uppercase;
+    cursor: pointer;
+    box-shadow: 5px 5px 0px var(--pb-fg);
+    transition: 0.1s;
+}
+
+/* Fix 2: Stop Text Clipping */
+.pb-card-title {
+    margin: 10px 0;
+    font-size: 16px;
+    /* Slightly smaller for long titles */
+    font-weight: 900;
+    text-transform: uppercase;
+    line-height: 1.2;
+    color: var(--pb-fg);
+    word-wrap: break-word;
+}
+
+.pb-card-preview {
+    font-size: 13px;
+    line-height: 1.5;
+    color: #444;
+    margin-bottom: 20px;
+    font-family: var(--pb-font);
+    border-left: 2px solid var(--pb-blue);
+    padding-left: 12px;
+    /* 🟢 ADDED: Line clamping so text fades out instead of clipping */
+    display: -webkit-box;
+    -webkit-line-clamp: 4;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+/* --- NEW FEATURE STYLES --- */
+
+.pb-sidebar-controls {
+    padding: 15px 24px;
+    background: #e5e5e5;
+    border-bottom: 4px solid var(--pb-fg);
+    display: flex;
+    gap: 10px;
+}
+
+.pb-search-input,
+.pb-category-select {
+    padding: 8px;
+    border: 2px solid var(--pb-fg);
+    font-family: var(--pb-mono);
+    font-size: 12px;
+    background: var(--pb-white);
+    color: var(--pb-fg);
+}
+
+.pb-search-input {
+    flex: 1;
+}
+
+.pb-search-input:focus {
+    outline: 2px solid var(--pb-blue);
+}
+
+.pb-source-badge {
+    display: inline-block;
+    background: var(--pb-accent-soft);
+    color: var(--pb-accent);
+    padding: 3px 8px;
+    font-family: var(--pb-mono);
+    font-size: 10px;
+    font-weight: 700;
+    border-radius: 4px;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+}
+
+/* --- PROMPTBOOST UI v5.1 UPGRADES --- */
+
+/* Fix the White-on-White Inject Button */
+.pb-use-btn {
+    width: 100%;
+    background: var(--pb-white);
+    border: 3px solid var(--pb-fg);
+    color: var(--pb-fg);
+    /* Forces text to be dark */
+    padding: 12px;
+    font-family: var(--pb-font);
+    font-weight: 900;
+    text-transform: uppercase;
+    cursor: pointer;
+    box-shadow: 5px 5px 0px var(--pb-fg);
+    transition: 0.1s;
+}
+
+/* Card Titles & Previews */
+.pb-card-title {
+    margin: 10px 0;
+    font-size: 16px;
+    font-weight: 900;
+    text-transform: uppercase;
+    line-height: 1.2;
+    color: var(--pb-fg);
+    word-wrap: break-word;
+}
+
+.pb-card-preview {
+    font-size: 13px;
+    line-height: 1.5;
+    color: #444;
+    margin-bottom: 5px;
+    font-family: var(--pb-font);
+    border-left: 2px solid var(--pb-blue);
+    padding-left: 12px;
+    display: -webkit-box;
+    -webkit-line-clamp: 4;
+    /* Clips at 4 lines */
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+/* When the user clicks Read More */
+.pb-card-preview.pb-expanded {
+    -webkit-line-clamp: unset;
+    overflow: visible;
+}
+
+/* The Read More Button */
+.pb-expand-btn {
+    background: none;
+    border: none;
+    color: var(--pb-blue);
+    font-family: var(--pb-mono);
+    font-size: 10px;
+    font-weight: 700;
+    cursor: pointer;
+    padding: 0;
+    margin-bottom: 15px;
+    text-decoration: underline;
+}
+
+.pb-expand-btn:hover {
+    color: var(--pb-red);
+}
+
+/* Search & Filter Controls */
+.pb-sidebar-controls {
+    padding: 15px 24px;
+    background: #e5e5e5;
+    border-bottom: 4px solid var(--pb-fg);
+    display: flex;
+    gap: 10px;
+}
+
+.pb-search-input,
+.pb-category-select {
+    padding: 8px;
+    border: 2px solid var(--pb-fg);
+    font-family: var(--pb-mono);
+    font-size: 12px;
+    background: var(--pb-white);
+    color: var(--pb-fg);
+}
+
+.pb-search-input {
+    flex: 1;
+}
+
+.pb-search-input:focus {
+    outline: 2px solid var(--pb-blue);
+}
+
+.pb-source-badge {
+    display: inline-block;
+    background: var(--pb-accent-soft);
+    color: var(--pb-accent);
+    padding: 3px 8px;
+    font-family: var(--pb-mono);
+    font-size: 10px;
+    font-weight: 700;
+    border-radius: 4px;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+}

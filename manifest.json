@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
   "name": "Prompt Boost",
-  "version": "1.0",
-  "description": "On-device prompt engineering using Chrome's built-in AI.",
+  "version": "1.2",
+  "description": "AI prompt engineering on every AI platform. Gemini, Groq, Mistral engine rotation.",
   "permissions": [
     "storage",
     "activeTab"
@@ -10,10 +10,19 @@
   "host_permissions": [
     "https://chatgpt.com/*",
     "https://claude.ai/*",
-    "https://gemini.google.com/*"
+    "https://gemini.google.com/*",
+    "https://www.perplexity.ai/*",
+    "https://grok.com/*",
+    "https://x.com/*",
+    "https://raw.githubusercontent.com/*",
+    "https://generativelanguage.googleapis.com/*",
+    "https://api.groq.com/*",
+    "https://api.mistral.ai/*",
+    "https://openrouter.ai/*"
   ],
   "action": {
-    "default_icon": "icon.png"
+    "default_icon": "icon.png",
+    "default_popup": "popup.html"
   },
   "background": {
     "service_worker": "background.js"
@@ -23,7 +32,10 @@
       "matches": [
         "https://chatgpt.com/*",
         "https://claude.ai/*",
-        "https://gemini.google.com/*"
+        "https://gemini.google.com/*",
+        "https://www.perplexity.ai/*",
+        "https://grok.com/*",
+        "https://x.com/i/grok*"
       ],
       "js": [
         "content/content.js"
@@ -31,8 +43,7 @@
       "css": [
         "content/style.css"
       ],
-      "run_at": "document_end",
-      "world": "MAIN"
+      "run_at": "document_end"
     }
   ],
   "icons": {

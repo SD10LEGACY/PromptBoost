@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PromptBoost</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Outfit:wght@500;700;900&display=swap"
+    rel="stylesheet">
+  <style>
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    /* ── 1. BAUHAUS DESIGN TOKENS ── */
+    :root {
+      --red: #D02020;
+      --blue: #1040C0;
+      --yellow: #F0C020;
+      --black: #121212;
+      --white: #F0F0F0;
+      /* Off-white canvas */
+      --pure-white: #FFFFFF;
+
+      --border-thick: 4px solid #121212;
+      --border-thin: 2px solid #121212;
+
+      --shadow-sm: 4px 4px 0px 0px #121212;
+      --shadow-md: 6px 6px 0px 0px #121212;
+      --shadow-lg: 8px 8px 0px 0px #121212;
+
+      --font-display: 'Outfit', sans-serif;
+      --font-mono: 'Space Mono', monospace;
+    }
+
+    body {
+      width: 380px;
+      /* Slightly wider to accommodate bold layouts */
+      background: var(--white);
+      color: var(--black);
+      font-family: var(--font-display);
+      overflow-x: hidden;
+      border: var(--border-thick);
+    }
+
+    /* ── 2. GEOMETRIC HEADER ── */
+    .header {
+      background: var(--red);
+      border-bottom: var(--border-thick);
+      padding: 24px 20px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Abstract background geometry */
+    .header::before {
+      content: '';
+      position: absolute;
+      right: -20px;
+      top: -20px;
+      width: 80px;
+      height: 80px;
+      background: var(--yellow);
+      border: var(--border-thick);
+      border-radius: 50%;
+    }
+
+    .header::after {
+      content: '';
+      position: absolute;
+      right: 40px;
+      bottom: -10px;
+      width: 40px;
+      height: 40px;
+      background: var(--blue);
+      border: var(--border-thick);
+      transform: rotate(45deg);
+    }
+
+    .header h1 {
+      font-size: 32px;
+      font-weight: 900;
+      color: var(--pure-white);
+      text-transform: uppercase;
+      letter-spacing: -0.02em;
+      line-height: 1;
+      position: relative;
+      z-index: 2;
+      text-shadow: 3px 3px 0px var(--black);
+    }
+
+    /* ── 3. ROTATION STRIP (COLOR BLOCKING) ── */
+    .rotation-strip {
+      background: var(--yellow);
+      border-bottom: var(--border-thick);
+      padding: 12px 20px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--black);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      text-transform: uppercase;
+    }
+
+    /* ── 4. FORMS & CARDS ── */
+    .section {
+      padding: 20px;
+      border-bottom: var(--border-thick);
+      background: var(--pure-white);
+      background-image: radial-gradient(var(--black) 1px, transparent 1px);
+      background-size: 20px 20px;
+      background-position: -10px -10px;
+    }
+
+    .section-label {
+      background: var(--black);
+      color: var(--pure-white);
+      display: inline-block;
+      padding: 6px 12px;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      margin-bottom: 20px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .provider-block {
+      background: var(--pure-white);
+      border: var(--border-thin);
+      padding: 12px;
+      margin-bottom: 16px;
+      box-shadow: var(--shadow-sm);
+      position: relative;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .provider-block:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
+    }
+
+    .provider-block.active-key {
+      border-color: var(--blue);
+      border-width: 3px;
+    }
+
+    /* Geometric Badges */
+    .provider-badge {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    .provider-dot {
+      width: 14px;
+      height: 14px;
+      border: 2px solid var(--black);
+      background: var(--white);
+      flex-shrink: 0;
+    }
+
+    /* Unique shapes per provider */
+    #dot-gemini {
+      border-radius: 50%;
+    }
+
+    /* Circle */
+    #dot-groq {
+      border-radius: 0;
+    }
+
+    /* Square */
+    #dot-mistral {
+      clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+      border: none;
+      background: var(--black);
+      height: 12px;
+    }
+
+    /* Triangle */
+    #dot-openrouter {
+      border-radius: 50%;
+    }
+
+    .provider-dot.set {
+      background: var(--red);
+    }
+
+    #dot-mistral.set {
+      background: var(--red);
+    }
+
+    .provider-name {
+      font-size: 14px;
+      font-weight: 900;
+      text-transform: uppercase;
+      color: var(--black);
+    }
+
+    .provider-model {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      font-weight: 700;
+      background: var(--black);
+      color: var(--yellow);
+      padding: 2px 6px;
+      margin-left: auto;
+    }
+
+    .key-input-wrap {
+      position: relative;
+      display: flex;
+    }
+
+    .key-input {
+      width: 100%;
+      background: var(--white);
+      border: var(--border-thin);
+      color: var(--black);
+      font-family: var(--font-mono);
+      font-size: 12px;
+      font-weight: 700;
+      padding: 10px 40px 10px 12px;
+      outline: none;
+      border-radius: 0;
+    }
+
+    .key-input:focus {
+      background: var(--yellow);
+    }
+
+    .key-input.has-value {
+      background: #E8F5E9;
+      /* Subtle green to indicate filled */
+    }
+
+    .toggle-vis {
+      position: absolute;
+      right: 0;
+      top: 0;
+      height: 100%;
+      width: 40px;
+      background: var(--black);
+      border: var(--border-thin);
+      border-left: none;
+      color: var(--pure-white);
+      cursor: pointer;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .toggle-vis:hover {
+      background: var(--blue);
+    }
+
+    /* ── 5. BYOK & ACTIVE ENGINE ── */
+    .byok-badge {
+      background: var(--blue);
+      color: var(--pure-white);
+      font-family: var(--font-mono);
+      font-size: 12px;
+      font-weight: 700;
+      padding: 6px 10px;
+      border: var(--border-thin);
+      box-shadow: 2px 2px 0px var(--black);
+    }
+
+    .byok-help-text {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      background: var(--white);
+      border: var(--border-thin);
+      padding: 8px;
+      margin-top: 8px;
+      font-weight: 700;
+    }
+
+    .active-engine {
+      background: var(--black);
+      border-bottom: var(--border-thick);
+      padding: 12px 20px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 700;
+      color: #4ade80;
+      /* Terminal green */
+      display: none;
+      align-items: center;
+      gap: 10px;
+      text-transform: uppercase;
+    }
+
+    .active-engine.visible {
+      display: flex;
+    }
+
+    .pulse {
+      width: 12px;
+      height: 12px;
+      background: var(--red);
+      border: 2px solid var(--pure-white);
+      border-radius: 0;
+      /* Square pulse */
+      animation: blink 1s steps(2) infinite;
+    }
+
+    @keyframes blink {
+      50% {
+        opacity: 0;
+      }
+    }
+
+    /* ── 6. BUTTONS & FOOTER ── */
+    .save-container {
+      padding: 20px;
+      background: var(--blue);
+    }
+
+    .save-btn {
+      display: block;
+      width: 100%;
+      padding: 16px;
+      background: var(--yellow);
+      color: var(--black);
+      border: var(--border-thick);
+      font-family: var(--font-display);
+      font-size: 18px;
+      font-weight: 900;
+      text-transform: uppercase;
+      cursor: pointer;
+      box-shadow: var(--shadow-sm);
+      transition: transform 0.1s, box-shadow 0.1s;
+    }
+
+    .save-btn:hover {
+      background: var(--pure-white);
+    }
+
+    .save-btn:active {
+      transform: translate(4px, 4px);
+      box-shadow: 0px 0px 0px 0px var(--black);
+    }
+
+    .status-bar {
+      margin: 20px 20px 0;
+      padding: 12px;
+      border: var(--border-thick);
+      font-family: var(--font-mono);
+      font-size: 12px;
+      font-weight: 700;
+      display: none;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .status-bar.ok {
+      background: #4ade80;
+      color: var(--black);
+      display: block;
+    }
+
+    .status-bar.err {
+      background: var(--red);
+      color: var(--pure-white);
+      display: block;
+    }
+
+    .status-bar.info {
+      background: var(--white);
+      color: var(--black);
+      display: block;
+    }
+
+    .footer {
+      background: var(--black);
+      padding: 16px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .footer-link {
+      color: var(--yellow);
+      font-family: var(--font-mono);
+      font-size: 12px;
+      font-weight: 700;
+      text-decoration: none;
+      border-bottom: 2px solid transparent;
+    }
+
+    .footer-link:hover {
+      border-bottom-color: var(--yellow);
+    }
+
+    .version-tag {
+      color: var(--white);
+      font-family: var(--font-mono);
+      font-size: 10px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="header">
+    <h1>Prompt Boost</h1>
+  </div>
+
+  <div class="rotation-strip">
+    ROTATION: GEMINI → GROQ → MISTRAL
+  </div>
+
+  <div class="active-engine" id="active-engine-bar">
+    <div class="pulse"></div>
+    <span id="active-engine-text">LOADING...</span>
+  </div>
+
+  <div id="status-bar" class="status-bar"></div>
+
+  <div class="section">
+    <div class="section-label">API KEYS (Local Storage)</div>
+
+    <div class="provider-block" id="block-gemini">
+      <div class="provider-badge">
+        <div class="provider-dot" id="dot-gemini"></div>
+        <span class="provider-name">Gemini</span>
+        <span class="provider-model">2.0 Flash</span>
+      </div>
+      <div class="key-input-wrap">
+        <input class="key-input" id="key-gemini" type="password" placeholder="AIza...">
+        <button class="toggle-vis" data-target="key-gemini">👁</button>
+      </div>
+    </div>
+
+    <div class="provider-block" id="block-groq">
+      <div class="provider-badge">
+        <div class="provider-dot" id="dot-groq"></div>
+        <span class="provider-name">Groq</span>
+        <span class="provider-model">Llama-3.3</span>
+      </div>
+      <div class="key-input-wrap">
+        <input class="key-input" id="key-groq" type="password" placeholder="gsk_...">
+        <button class="toggle-vis" data-target="key-groq">👁</button>
+      </div>
+    </div>
+
+    <div class="provider-block" id="block-mistral">
+      <div class="provider-badge">
+        <div class="provider-dot" id="dot-mistral"></div>
+        <span class="provider-name">Mistral</span>
+        <span class="provider-model">Small</span>
+      </div>
+      <div class="key-input-wrap">
+        <input class="key-input" id="key-mistral" type="password" placeholder="...">
+        <button class="toggle-vis" data-target="key-mistral">👁</button>
+      </div>
+    </div>
+
+    <div class="provider-block" id="block-openrouter">
+      <div class="provider-badge">
+        <div class="provider-dot" id="dot-openrouter"></div>
+        <span class="provider-name">OpenRouter</span>
+        <span class="provider-model">Free</span>
+      </div>
+      <div class="key-input-wrap">
+        <input class="key-input" id="key-openrouter" type="password" placeholder="sk-or-...">
+        <button class="toggle-vis" data-target="key-openrouter">👁</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="section" style="background-image: none; background: var(--white);">
+    <div style="display: flex; gap: 10px; margin-bottom: 16px;">
+      <div class="section-label" style="margin:0;">BRING YOUR OWN KEY</div>
+      <div class="byok-badge">BYOK</div>
+    </div>
+
+    <div class="provider-block" id="block-byok" style="margin-bottom: 0;">
+      <div class="key-input-wrap">
+        <input class="key-input" id="key-byok" type="password" placeholder="sk-or-... (Premium)">
+        <button class="toggle-vis" data-target="key-byok">👁</button>
+      </div>
+      <div class="byok-help-text">
+        Overrides all other keys. Unlocks GPT-4o, Claude 3.5, etc. via OpenRouter.
+      </div>
+    </div>
+  </div>
+
+  <div class="save-container">
+    <button class="save-btn" id="save-btn">SAVE & TEST KEYS</button>
+  </div>
+
+  <div class="footer">
+    <a class="footer-link" href="https://openrouter.ai/keys" target="_blank">GET FREE KEYS →</a>
+    <span class="version-tag">IEM_2026 // PB_v4.0</span>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+
+</html>
