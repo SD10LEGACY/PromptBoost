@@ -31,12 +31,13 @@
 <img src="https://img.shields.io/badge/API_Keys-BYOK_Local-f59e0b?style=for-the-badge&logo=keycdn&logoColor=white" alt="BYOK API Keys"/>
 <img src="https://img.shields.io/badge/License-MIT-3b82f6?style=for-the-badge&logo=opensourceinitiative&logoColor=white" alt="MIT License"/>
 </p>
+<!--
 <br>
 A privacy-first, zero-telemetry browser extension that seamlessly intercepts and perfectly engineers your LLM prompts using Bring Your Own Key (BYOK) with Intelligent Multi-Engine Rotation — before they ever reach a server.
 <br>
 </div>
+-->
 <div align="center">
-
 <br>
 
 > *A privacy-first, zero-telemetry browser extension that seamlessly intercepts and perfectly engineers your LLM prompts using Intelligent Multi-Engine Rotation (Gemini → Groq → Mistral → OpenRouter) — with your API keys stored only on your device.*
