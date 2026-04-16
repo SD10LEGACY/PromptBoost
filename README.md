@@ -138,7 +138,7 @@ The prompt library is never static. A Python scraper runs on GitHub Actions ever
 │  🔴 Reddit   ─┤   Firehose   Rotation│                          │
 │  ⭐ GitHub   ─┘   (scraper.py) └─▶  └─▶ Extension fetches live │
 │                                                                 │
-│  AI ROTATION: Gemini 2.0 Flash → Groq → Mistral → OpenRouter   │
+│  AI ROTATION: Gemini 2.0 Flash → Groq → Mistral → OpenRouter    │
 │  OUTPUT FORMAT: { title, tag, platforms[], text, source }       │
 │  DIVERSITY CAP: max 5 prompts per tag per run                   │
 └─────────────────────────────────────────────────────────────────┘
