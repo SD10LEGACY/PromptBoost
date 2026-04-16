@@ -107,14 +107,7 @@ async function routePrompt(text, keys) {
     }
     return { error: "All configured engines failed." };
 }
-````
-
-### 2\. The React / ProseMirror Injection Hack
-
-Injecting text into modern AI web apps is notoriously difficult. React and ProseMirror maintain their own virtual state trees and **silently reject** external DOM mutations. PromptBoost targets the `HTMLTextAreaElement` prototype directly to force the React reconciler to acknowledge the injection as a genuine user event.
-
-```javascript
-/**
+2. The React / ProseMirror Injection HackInjecting text into modern AI web apps is notoriously difficult. React and ProseMirror maintain their own virtual state trees and silently reject external DOM mutations. PromptBoost targets the HTMLTextAreaElement prototype directly to force the React reconciler to acknowledge the injection as a genuine user event.JavaScript/**
  * PROMPTBOOST — Native React State Override
  * Intercepts the HTMLTextAreaElement's native setter via Object.getOwnPropertyDescriptor,
  * then fires a bubbling 'input' event to trick React's SyntheticEvent system.
@@ -132,27 +125,7 @@ function injectIntoReactControlledInput(element, engineeredText) {
   // Step 3: Dispatch a bubbling synthetic input event
   element.dispatchEvent(new Event("input", { bubbles: true }));
 }
-```
-
------
-
-## 🔐 Security & Data Privacy
-
-Privacy is not a feature of PromptBoost; it is the fundamental architectural constraint.
-
-1.  **Zero Data Harvesting:** The extension contains zero tracking pixels, analytics suites, or telemetry modules. Your data is your data.
-2.  **Local Credential Storage:** API Keys entered into the extension are stored strictly using the `chrome.storage.local` API. They are never synced across devices via Google accounts, and they are never transmitted to our servers.
-3.  **Direct-to-Provider Routing:** When you click the engineer button, your prompt is sent directly from your browser to the official API endpoints of Google (Gemini), Groq, or Mistral. There is no middleman server.
-4.  **Isolated Worlds:** The extension operates within Chrome's Isolated World paradigm, ensuring that malicious scripts on websites cannot access the extension's memory space or your stored API keys.
-
------
-
-## 🎨 UI / UX Design System
-
-The extension's interface avoids the standard "SaaS Bootstrap" aesthetic by implementing a **Constructivist Bauhaus** design language using pure Vanilla CSS — no frameworks, no dependencies.
-
-```
-┌─────────────────────────────────────────────────────────┐
+🔐 Security & Data PrivacyPrivacy is not a feature of PromptBoost; it is the fundamental architectural constraint.Zero Data Harvesting: The extension contains zero tracking pixels, analytics suites, or telemetry modules. Your data is your data.Local Credential Storage: API Keys entered into the extension are stored strictly using the chrome.storage.local API. They are never synced across devices via Google accounts, and they are never transmitted to our servers.Direct-to-Provider Routing: When you click the engineer button, your prompt is sent directly from your browser to the official API endpoints of Google (Gemini), Groq, or Mistral. There is no middleman server.Isolated Worlds: The extension operates within Chrome's Isolated World paradigm, ensuring that malicious scripts on websites cannot access the extension's memory space or your stored API keys.🎨 UI / UX Design SystemThe extension's interface avoids the standard "SaaS Bootstrap" aesthetic by implementing a Constructivist Bauhaus design language using pure Vanilla CSS — no frameworks, no dependencies.┌─────────────────────────────────────────────────────────┐
 │  DESIGN PILLARS                                         │
 │                                                         │
 │  📐 GEOMETRY    →  Strict programmatic color-blocking   │
@@ -161,105 +134,6 @@ The extension's interface avoids the standard "SaaS Bootstrap" aesthetic by impl
 │  🎭 SIDEBAR     →  Slide-out prompt library panel       │
 │  🖤 PALETTE     →  #D02020 · #1040C0 · #F0C020          │
 └─────────────────────────────────────────────────────────┘
-```
-
-> **Philosophy:** Every pixel is intentional. The UI should feel like a precision, mechanical instrument — grounded in pure primary colors, hard borders, and bold typography.
-
------
-
-## 🛠️ Tech Stack
-
-\<div align="center"\>
-
-\<img src="https://www.google.com/search?q=https://skillicons.dev/icons%3Fi%3Djs,html,css,chrome,git,github,vscode,python%26perline%3D8%26theme%3Ddark" alt="Tech Stack Icons"/\>
-
-<br>
-
-| Layer | Technology | Purpose |
-|---|---|---|
-| 🧠 **AI Engine** | Gemini / Groq / Mistral APIs | High-speed prompt engineering |
-| 🔌 **Extension** | Chrome MV3 — Service Workers | CSP-exempt background orchestration |
-| 💉 **Injection** | Content Scripts — DOM APIs | React/ProseMirror overrides |
-| 🎨 **UI** | Vanilla CSS — Bauhaus System | Constructivist glassmorphism |
-| ☁️ **Automation** | GitHub Actions + Python | Automated Trending Library Scraper |
-
-\</div\>
-
------
-
-## 🗺️ Roadmap
-
-\<div align="center"\>
-
-| Status | Feature |
-|:---:|---|
-| ✅ | Core DOM injection engine for modern AI platforms |
-| ✅ | BYOK Multi-Engine Rotation (Gemini, Groq, Mistral) |
-| ✅ | Cloud JSON prompt library with GitHub Actions auto-scraper |
-| ✅ | Bauhaus Constructivist UI design system |
-| ✅ | Microsoft Edge Add-ons Submission |
-| 🔄 | Chrome Web Store submission |
-| ⏳ | Custom prompt framework builder (user-defined templates) |
-| ⏳ | Firefox MV3 port |
-| 💡 | Prompt history & local version control |
-
-\</div\>
-
-`✅ Done`   `🔄 In Progress`   `⏳ Planned`   `💡 Idea`
-
------
-
-\<details\>
-\<summary\>\<h2\>🤝 Contributing & Developer Setup\</h2\>\</summary\>
-
-<br>
-
-Contributions, issues and feature requests are welcome\!
-
-**1. Clone the repository**
-
-```bash
-git clone [https://github.com/SD10LEGACY/PromptBoost.git](https://github.com/SD10LEGACY/PromptBoost.git)
+Philosophy: Every pixel is intentional. The UI should feel like a precision, mechanical instrument — grounded in pure primary colors, hard borders, and bold typography.🛠️ Tech Stack<div align="center"><img src="https://www.google.com/search?q=https://skillicons.dev/icons%3Fi%3Djs,html,css,chrome,git,github,vscode,python%26perline%3D8%26theme%3Ddark" alt="Tech Stack Icons"/>LayerTechnologyPurpose🧠 AI EngineGemini / Groq / Mistral APIsHigh-speed prompt engineering🔌 ExtensionChrome MV3 — Service WorkersCSP-exempt background orchestration💉 InjectionContent Scripts — DOM APIsReact/ProseMirror overrides🎨 UIVanilla CSS — Bauhaus SystemConstructivist glassmorphism☁️ AutomationGitHub Actions + PythonAutomated Trending Library Scraper</div>🗺️ Roadmap<div align="center">StatusFeature✅Core DOM injection engine for modern AI platforms✅BYOK Multi-Engine Rotation (Gemini, Groq, Mistral)✅Cloud JSON prompt library with GitHub Actions auto-scraper✅Bauhaus Constructivist UI design system✅Microsoft Edge Add-ons Submission🔄Chrome Web Store submission⏳Custom prompt framework builder (user-defined templates)⏳Firefox MV3 port💡Prompt history & local version control</div>✅ Done   🔄 In Progress   ⏳ Planned   💡 Idea<details><summary><h2>🤝 Contributing & Developer Setup</h2></summary>Contributions, issues and feature requests are welcome!1. Clone the repositoryBashgit clone [https://github.com/SD10LEGACY/PromptBoost.git](https://github.com/SD10LEGACY/PromptBoost.git)
 cd PromptBoost
-```
-
-**2. Load as an Unpacked Extension**
-
-1.  Navigate to `chrome://extensions/` or `edge://extensions/`
-2.  Toggle **Developer Mode** ON (top-right corner)
-3.  Click **"Load unpacked"**
-4.  Select the cloned `PromptBoost/` directory
-
-**3. Provide your Keys**
-To develop locally, click the extension icon and provide at least one valid API key (Groq recommended for highest speed).
-
-**4. Submitting Changes**
-
-1.  **Fork** the repository
-2.  Create a feature branch: `git checkout -b feat/your-feature-name`
-3.  Commit your changes: `git commit -m 'feat: add some feature'`
-4.  Push to your branch: `git push origin feat/your-feature-name`
-5.  Open a **Pull Request**
-
-Please follow [Conventional Commits](https://www.conventionalcommits.org/) for commit messages.
-
-\</details\>
-
------
-
-\<div align="center"\>
-
-[](https://git.io/typing-svg)
-
-<br>
-
-\<img src="https://komarev.com/ghpvc/?username=SD10LEGACY\&label=Profile+Views\&color=10a37f\&style=for-the-badge" alt="Profile Views"/\>
-
-<br><br>
-
-\<img src="https://capsule-render.vercel.app/api?type=waving\&color=0:0d1117,35:063b35,70:10a37f,100:0d1117\&height=140\&section=footer\&animation=fadeIn" width="100%" alt="PromptBoost Footer"/\>
-
-\</div\>
-
-```
-```
+2. Load as an Unpacked ExtensionNavigate to chrome://extensions/ or edge://extensions/Toggle Developer Mode ON (top-right corner)Click "Load unpacked"Select the cloned PromptBoost/ directory3. Provide your KeysTo develop locally, click the extension icon and provide at least one valid API key (Groq recommended for highest speed).4. Submitting ChangesFork the repositoryCreate a feature branch: git checkout -b feat/your-feature-nameCommit your changes: git commit -m 'feat: add some feature'Push to your branch: git push origin feat/your-feature-nameOpen a Pull RequestPlease follow Conventional Commits for commit messages.</details><div align="center"><img src="https://komarev.com/ghpvc/?username=SD10LEGACY&label=Profile+Views&color=10a37f&style=for-the-badge" alt="Profile Views"/><img src="https://capsule-render.vercel.app/api?type=waving&color=0:0d1117,35:063b35,70:10a37f,100:0d1117&height=140&section=footer&animation=fadeIn" width="100%" alt="PromptBoost Footer"/></div>
