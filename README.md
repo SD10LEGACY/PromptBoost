@@ -1,10 +1,3 @@
-Here is the fully cleaned and corrected README.md with all the copy-paste artifacts (code, download, content_copy, expand_less) completely removed. The code blocks are properly formatted with standard Markdown syntax.
-
-code
-Markdown
-download
-content_copy
-expand_less
 <div align="center">
 
 <!-- ══════════════════════════════════════════════════════ -->
