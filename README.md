@@ -136,28 +136,26 @@ function injectIntoReactControlledInput(element, engineeredText) {
 
 ***
 
-## ☁️ GitHub Actions Automation — Trending Library Pipeline
-
-The **Trending Prompt Library** is not static. It is powered by a fully automated Python scraper defined in `.github/workflows/auto-scraper.yml` that runs on a scheduled cron job. The pipeline fetches, deduplicates, and ranks community-sourced prompts, then commits an updated `prompts.json` feed to the repository. The extension's `background.js` fetches this JSON at runtime, meaning the library content is always fresh without ever requiring a new store submission.
+```text
 ┌──────────────────────────────────────────────────────────────┐
-│ AUTOMATED PIPELINE: auto-scraper.yml │
-│ │
-│ [Cron Schedule] │
-│ │ │
-│ ▼ │
-│ [Python Scraper] → Fetches & ranks trending prompts │
-│ │ │
-│ ▼ │
-│ [Deduplication] → Filters noise, normalises schema │
-│ │ │
-│ ▼ │
-│ [Git Commit] → Pushes updated prompts.json to repo │
-│ │ │
-│ ▼ │
-│ [background.js] → Extension fetches live JSON at runtime │
+│ AUTOMATED PIPELINE: auto-scraper.yml                         │
+│                                                              │
+│  [Cron Schedule]                                             │
+│         │                                                    │
+│         ▼                                                    │
+│  [Python Scraper] → Fetches & ranks trending prompts         │
+│         │                                                    │
+│         ▼                                                    │
+│  [Deduplication]  → Filters noise, normalises schema         │
+│         │                                                    │
+│         ▼                                                    │
+│  [Git Commit]     → Pushes updated prompts.json to repo      │
+│         │                                                    │
+│         ▼                                                    │
+│  [background.js]  → Extension fetches live JSON at runtime   │
 └──────────────────────────────────────────────────────────────┘
 
-text
+```text
 
 > **Zero store submissions required.** The library updates propagate to all users instantly through the cloud JSON feed.
 
@@ -174,20 +172,21 @@ Privacy is not a feature of PromptBoost; it is the fundamental architectural con
 
 ***
 
-## 🎨 UI / UX Design System
+### 🛠️ Fix 2: The Bauhaus Design System
+Find the `## 🎨 UI / UX Design System` section and replace the broken box with this exact block:
 
-The extension's interface avoids the standard "SaaS Bootstrap" aesthetic by implementing a **Constructivist Bauhaus** design language using pure Vanilla CSS — no frameworks, no dependencies.
+```text
+```text
 ┌─────────────────────────────────────────────────────────┐
-│ DESIGN PILLARS │
-│ │
-│ 📐 GEOMETRY → Strict programmatic color-blocking │
-│ 🌑 DEPTH → Hard offset shadows (4px/8px black) │
-│ 🌊 MOTION → CSS translation matrices for reveals │
-│ 🎭 SIDEBAR → Slide-out prompt library panel │
-│ 🖤 PALETTE → #D02020 · #1040C0 · #F0C020 │
+│  DESIGN PILLARS                                         │
+│                                                         │
+│  📐 GEOMETRY    →  Strict programmatic color-blocking   │
+│  🌑 DEPTH       →  Hard offset shadows (4px/8px black)  │
+│  🌊 MOTION      →  CSS translation matrices for reveals │
+│  🎭 SIDEBAR     →  Slide-out prompt library panel       │
+│  🖤 PALETTE     →  #D02020 · #1040C0 · #F0C020          │
 └─────────────────────────────────────────────────────────┘
-
-text
+```text
 
 > **Philosophy:** Every pixel is intentional. The UI should feel like a precision, mechanical instrument — grounded in pure primary colors, hard borders, and bold typography.
 
