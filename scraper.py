@@ -23,13 +23,19 @@ Fixes over v1.0:
 """
 
 import os
+import sys
 import csv
 import json
 import time
 import random
 import requests
+from dotenv import load_dotenv
 from googleapiclient.discovery import build
 from youtube_transcript_api import YouTubeTranscriptApi
+
+# Load environment variables from the local .env file
+# (GitHub Actions will ignore this and use Repository Secrets automatically)
+load_dotenv()
 
 # Increase CSV field size limit to handle massive prompts
 csv.field_size_limit(2147483647)
