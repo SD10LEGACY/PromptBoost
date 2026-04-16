@@ -31,6 +31,9 @@ import requests
 from googleapiclient.discovery import build
 from youtube_transcript_api import YouTubeTranscriptApi
 
+# Increase CSV field size limit to handle massive prompts
+csv.field_size_limit(2147483647)
+
 # ─── 1. SECRETS ───────────────────────────────────────────────────────────────
 GEMINI_KEY      = os.getenv("GEMINI_API_KEY")
 GROQ_KEY        = os.getenv("GROQ_API_KEY")
