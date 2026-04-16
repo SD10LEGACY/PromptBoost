@@ -18,16 +18,27 @@
 <!--                      BADGES                            -->
 <!-- ══════════════════════════════════════════════════════ -->
 
+<!-- ══════════════════════════════════════════════════════ -->
+<!-- BADGES -->
+<!-- ══════════════════════════════════════════════════════ -->
 <p>
-  <img src="https://img.shields.io/badge/Chrome_Extension-In_Development-10a37f?style=for-the-badge&logo=googlechrome&logoColor=white" alt="Chrome Extension"/>
-  <img src="https://img.shields.io/badge/Manifest-V3_Compliant-4ade80?style=for-the-badge&logo=googlechrome&logoColor=black" alt="Manifest V3"/>
-  <img src="https://img.shields.io/badge/Gemini_Nano-Built--In_AI-8A2BE2?style=for-the-badge&logo=google&logoColor=white" alt="Gemini Nano"/>
+<img src="https://img.shields.io/badge/Microsoft_Edge-IN_REVIEW-0078d4?style=for-the-badge&logo=microsoftedge&logoColor=white" alt="Microsoft Edge (IN REVIEW)"/>
+<img src="https://img.shields.io/badge/Chrome_Extension-COMING_SOON-10a37f?style=for-the-badge&logo=googlechrome&logoColor=white" alt="Chrome Extension (COMING SOON)"/>
 </p>
 <p>
-  <img src="https://img.shields.io/badge/Privacy-100%25_On--Device-ef4444?style=for-the-badge&logo=shield&logoColor=white" alt="Privacy"/>
-  <img src="https://img.shields.io/badge/API_Keys-Zero_Required-f59e0b?style=for-the-badge&logo=keycdn&logoColor=white" alt="No API Keys"/>
-  <img src="https://img.shields.io/badge/License-MIT-3b82f6?style=for-the-badge&logo=opensourceinitiative&logoColor=white" alt="MIT License"/>
+<img src="https://img.shields.io/badge/Chrome_Extension-In_Development-10a37f?style=for-the-badge&logo=googlechrome&logoColor=white" alt="Chrome Extension"/>
+<img src="https://img.shields.io/badge/Manifest-V3_Compliant-4ade80?style=for-the-badge&logo=googlechrome&logoColor=black" alt="Manifest V3"/>
 </p>
+<p>
+<img src="https://img.shields.io/badge/Privacy-100%25_BYOK-ef4444?style=for-the-badge&logo=shield&logoColor=white" alt="Privacy"/>
+<img src="https://img.shields.io/badge/API_Keys-BYOK_Local-f59e0b?style=for-the-badge&logo=keycdn&logoColor=white" alt="BYOK API Keys"/>
+<img src="https://img.shields.io/badge/License-MIT-3b82f6?style=for-the-badge&logo=opensourceinitiative&logoColor=white" alt="MIT License"/>
+</p>
+<br>
+A privacy-first, zero-latency browser extension that seamlessly intercepts and perfectly engineers your LLM prompts using Bring Your Own Key (BYOK) with Intelligent Multi-Engine Rotation — before they ever reach a server.
+<br>
+</div>
+<div align="center">
 
 <br>
 
