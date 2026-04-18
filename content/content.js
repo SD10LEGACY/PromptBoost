@@ -1,89 +1,97 @@
 /**
- * PROMPTBOOST - CONTENT ENGINE v3.2
- * Developed by: Shreyojit Das (Class of 2026, IEM)
+ * PROMPTBOOST — CONTENT ENGINE v3.2
+ * Shreyojit Das
  *
- * This file is intentionally thin.
- * All AI calls and fetches live in background.js (CSP-exempt).
- * This file only handles: DOM detection, text injection, UI.
+ * Intentionally thin. All AI calls and remote fetches are delegated to background.js
+ * which is CSP-exempt. This file owns: DOM detection, text injection, UI lifecycle.
  */
 (function () {
     "use strict";
 
     const PLATFORM_SELECTORS = {
-        'chatgpt.com':         ['#prompt-textarea', 'textarea[data-id="root"]'],
-        'claude.ai':           ['.ProseMirror[contenteditable="true"]', 'div[contenteditable="true"]'],
-        'gemini.google.com':   ['div.ql-editor[contenteditable="true"]', 'rich-textarea div[contenteditable="true"]', 'div[contenteditable="true"]'],
-        'perplexity.ai':       ['textarea[placeholder*="Ask"]', 'textarea', 'div[contenteditable="true"]'],
-        'grok.com':            ['textarea[placeholder*="Ask"]', 'textarea', 'div[contenteditable="true"]'],
-        'x.com':               ['div[contenteditable="true"]', 'textarea'],
+        'chatgpt.com':       ['#prompt-textarea', 'textarea[data-id="root"]'],
+        'claude.ai':         ['.ProseMirror[contenteditable="true"]', 'div[contenteditable="true"]'],
+        'gemini.google.com': ['div.ql-editor[contenteditable="true"]', 'rich-textarea div[contenteditable="true"]', 'div[contenteditable="true"]'],
+        'perplexity.ai':     ['textarea[placeholder*="Ask"]', 'textarea', 'div[contenteditable="true"]'],
+        'grok.com':          ['textarea[placeholder*="Ask"]', 'textarea', 'div[contenteditable="true"]'],
+        'x.com':             ['div[contenteditable="true"]', 'textarea'],
     };
 
-    // ── PLATFORM ──────────────────────────────────────────────────────────
     const host = window.location.hostname;
-    let PLATFORM_KEY = null;
+    let platformKey = null;
     for (const domain of Object.keys(PLATFORM_SELECTORS)) {
-        if (host.includes(domain)) { PLATFORM_KEY = domain; break; }
+        if (host.includes(domain)) { platformKey = domain; break; }
     }
-    const PLATFORM_NAME = PLATFORM_KEY?.split('.')[0] || 'unknown';
-    if (PLATFORM_KEY) document.body.classList.add('pb-platform-' + PLATFORM_NAME);
+    const platformName = platformKey?.split('.')[0] ?? 'unknown';
+    if (platformKey) document.body.classList.add('pb-platform-' + platformName);
 
-    // ── INPUT FINDER ──────────────────────────────────────────────────────
+    // ─────────────────────────────────────────────────────────────────────────
+
     function findInput() {
-        const selectors = PLATFORM_KEY
-            ? PLATFORM_SELECTORS[PLATFORM_KEY]
+        const selectors = platformKey
+            ? PLATFORM_SELECTORS[platformKey]
             : ['div[contenteditable="true"]', 'textarea', '.ProseMirror'];
 
         for (const sel of selectors) {
             const el = document.querySelector(sel);
             if (el) return el;
         }
+
+        // Some platforms (ChatGPT in particular) nest the textarea inside a shadow root
         for (const el of document.querySelectorAll('*')) {
-            if (el.shadowRoot) {
-                for (const sel of selectors) {
-                    const found = el.shadowRoot.querySelector(sel);
-                    if (found) return found;
-                }
+            if (!el.shadowRoot) continue;
+            for (const sel of selectors) {
+                const found = el.shadowRoot.querySelector(sel);
+                if (found) return found;
             }
         }
+
         const active = document.activeElement;
-        if (active && (active.tagName === 'TEXTAREA' || active.getAttribute('contenteditable') === 'true')) return active;
+        if (active && (active.tagName === 'TEXTAREA' || active.getAttribute('contenteditable') === 'true')) {
+            return active;
+        }
         return null;
     }
 
-    // ── INJECT TEXT ───────────────────────────────────────────────────────
     function injectText(text) {
         const input = findInput();
         if (!input) { showToast("❌ Input box not found"); return; }
+
         input.focus();
         try {
             if (input.tagName === 'TEXTAREA') {
-                const setter = Object.getOwnPropertyDescriptor(window.HTMLTextAreaElement.prototype, 'value').set;
-                setter.call(input, text);
+                // React and other frameworks intercept the value setter to track state.
+                // Assigning input.value directly bypasses their onChange — we need the
+                // native setter so React's synthetic event system picks up the change.
+                const nativeSetter = Object.getOwnPropertyDescriptor(window.HTMLTextAreaElement.prototype, 'value').set;
+                nativeSetter.call(input, text);
                 input.dispatchEvent(new Event('input', { bubbles: true }));
             } else {
+                // ProseMirror/contenteditable: execCommand is deprecated but remains the
+                // only cross-browser way to trigger the editor's internal history stack.
+                // Modern alternatives (InputEvent with insertText) don't work consistently.
                 document.execCommand('selectAll', false, null);
                 document.execCommand('insertText', false, text);
             }
             input.style.height = 'auto';
             input.style.height = input.scrollHeight + 'px';
         } catch (e) {
-            console.error('PB inject error:', e);
+            console.error('[PB] Text injection failed:', e);
             showToast("❌ Inject failed: " + e.message);
         }
     }
 
-    // ── AI ENGINEER ───────────────────────────────────────────────────────
-    // Sends to background.js → rotates through Gemini → Groq → Mistral → OpenRouter
     function runAIEngineer(btn) {
         const input = findInput();
         if (!input) { showToast("❌ No input box found"); return; }
-        const rawText = (input.value || input.innerText || '').trim();
-        if (rawText.length < 3) { showToast("⚠️ Type a prompt first!"); return; }
+
+        const draft = (input.value || input.innerText || '').trim();
+        if (draft.length < 3) { showToast("⚠️ Type a prompt first!"); return; }
 
         btn.classList.add('pb-loading');
         btn.textContent = '🌀';
 
-        chrome.runtime.sendMessage({ action: 'engineerPrompt', text: rawText }, (response) => {
+        chrome.runtime.sendMessage({ action: 'engineerPrompt', text: draft }, (response) => {
             btn.classList.remove('pb-loading');
             btn.textContent = '✨';
             if (response?.ok) {
@@ -95,8 +103,6 @@
         });
     }
 
-    // ── TRENDING LIBRARY ──────────────────────────────────────────────────
-    // background.js does the fetch — bypasses ChatGPT/Gemini/Grok CSP
     function loadTrendingLibrary() {
         const container = document.getElementById('pb-cards-container');
         if (!container) return;
@@ -107,84 +113,104 @@
         loader.textContent = 'SYNCING_REALTIME_DATA...';
         container.appendChild(loader);
 
+        // Fetch is delegated to background.js — direct fetches from content scripts get
+        // blocked by ChatGPT's and Gemini's CSP, even for GitHub raw URLs.
         chrome.runtime.sendMessage({ action: 'fetchPrompts' }, (response) => {
             container.textContent = '';
+
             if (!response?.ok) {
-                const err = document.createElement('div');
-                err.className = 'pb-loader-text';
-                err.textContent = 'NETWORK_ERROR: ' + (response?.error || 'Unknown');
-                container.appendChild(err);
+                const errEl = document.createElement('div');
+                errEl.className = 'pb-loader-text';
+                errEl.textContent = 'NETWORK_ERROR: ' + (response?.error || 'Unknown');
+                container.appendChild(errEl);
                 return;
             }
+
             const prompts = response.data || [];
             if (!prompts.length) {
-                const empty = document.createElement('div');
-                empty.className = 'pb-loader-text';
-                empty.textContent = 'DATABASE_EMPTY — trigger GitHub Action';
-                container.appendChild(empty);
+                const emptyEl = document.createElement('div');
+                emptyEl.className = 'pb-loader-text';
+                emptyEl.textContent = 'DATABASE_EMPTY — trigger GitHub Action';
+                container.appendChild(emptyEl);
                 return;
             }
-            const colors = ['var(--pb-red)', 'var(--pb-blue)', 'var(--pb-yellow)'];
-            prompts.forEach((p, i) => {
-                const card = document.createElement('div');
+
+            const accentColors = ['var(--pb-red)', 'var(--pb-blue)', 'var(--pb-yellow)'];
+            prompts.forEach((prompt, i) => {
+                const card    = document.createElement('div');
                 card.className = 'pb-card';
-                const deco = document.createElement('div');
+
+                const deco    = document.createElement('div');
                 deco.className = 'pb-card-deco';
-                deco.style.background = colors[i % 3];
-                const tag = document.createElement('div');
+                deco.style.background = accentColors[i % 3];
+
+                const tag     = document.createElement('div');
                 tag.className = 'pb-tag';
-                tag.textContent = p.tag || 'General';
-                const title = document.createElement('h3');
+                tag.textContent = prompt.tag || 'General';
+
+                const title   = document.createElement('h3');
                 title.className = 'pb-card-title';
-                title.textContent = p.title || 'Untitled';
+                title.textContent = prompt.title || 'Untitled';
+
                 const preview = document.createElement('p');
                 preview.className = 'pb-card-preview';
-                preview.textContent = (p.text || '').substring(0, 120) + '...';
-                const btn = document.createElement('button');
-                btn.className = 'pb-use-btn';
-                btn.textContent = 'INJECT_PROMPT';
-                btn.onclick = () => {
-                    injectText(p.text);
+                preview.textContent = (prompt.text || '').substring(0, 120) + '...';
+
+                const injectBtn = document.createElement('button');
+                injectBtn.className = 'pb-use-btn';
+                injectBtn.textContent = 'INJECT_PROMPT';
+                injectBtn.onclick = () => {
+                    injectText(prompt.text);
                     document.getElementById('pb-sidebar')?.classList.remove('pb-open');
                 };
-                card.append(deco, tag, title, preview, btn);
+
+                card.append(deco, tag, title, preview, injectBtn);
                 container.appendChild(card);
             });
         });
     }
 
-    // ── UI BUILDERS ───────────────────────────────────────────────────────
     function buildSidebar() {
         if (document.getElementById('pb-sidebar')) return;
-        const sidebar = document.createElement('div');
+
+        const sidebar  = document.createElement('div');
         sidebar.id = 'pb-sidebar';
-        const header = document.createElement('div');
+
+        const header   = document.createElement('div');
         header.className = 'pb-sidebar-header';
-        const h2 = document.createElement('h2');
-        h2.className = 'pb-sidebar-title';
-        h2.textContent = 'PROMPT_BOOST_LIB';
+
+        const heading  = document.createElement('h2');
+        heading.className = 'pb-sidebar-title';
+        heading.textContent = 'PROMPT_BOOST_LIB';
+
         const closeBtn = document.createElement('button');
         closeBtn.className = 'pb-close-btn';
         closeBtn.textContent = '×';
         closeBtn.onclick = () => sidebar.classList.remove('pb-open');
-        header.append(h2, closeBtn);
-        const content = document.createElement('div');
-        content.className = 'pb-sidebar-content';
-        content.id = 'pb-cards-container';
-        sidebar.append(header, content);
+
+        header.append(heading, closeBtn);
+
+        const body = document.createElement('div');
+        body.className = 'pb-sidebar-content';
+        body.id = 'pb-cards-container';
+
+        sidebar.append(header, body);
         document.body.appendChild(sidebar);
     }
 
     function injectButtons() {
         const input = findInput();
         if (!input || document.querySelector('.pb-btn-group')) return;
+
         const group = document.createElement('div');
         group.className = 'pb-btn-group';
+
         const wandBtn = document.createElement('button');
         wandBtn.className = 'pb-native-btn pb-wand-btn';
         wandBtn.title = 'AI Engineer (Gemini → Groq → Mistral fallback)';
         wandBtn.textContent = '✨';
         wandBtn.onclick = (e) => { e.preventDefault(); runAIEngineer(e.currentTarget); };
+
         const libBtn = document.createElement('button');
         libBtn.className = 'pb-native-btn pb-lib-btn';
         libBtn.title = 'Trending Prompt Library';
@@ -194,16 +220,17 @@
             document.getElementById('pb-sidebar')?.classList.add('pb-open');
             loadTrendingLibrary();
         };
+
         group.append(wandBtn, libBtn);
+
         const parent = input.parentElement;
-        if (parent) {
-            parent.style.position = 'relative';
-            parent.appendChild(group);
-        }
+        if (!parent) return;
+        parent.style.position = 'relative';
+        parent.appendChild(group);
+
         buildSidebar();
     }
 
-    // ── TOAST ─────────────────────────────────────────────────────────────
     function showToast(msg) {
         const toast = document.createElement('div');
         toast.className = 'pb-status-msg';
@@ -212,8 +239,12 @@
         setTimeout(() => toast.remove(), 3000);
     }
 
-    // ── OBSERVER ──────────────────────────────────────────────────────────
-    const observer = new MutationObserver(() => injectButtons());
-    observer.observe(document.body, { childList: true, subtree: true });
+    // ─────────────────────────────────────────────────────────────────────────
+
+    const domObserver = new MutationObserver(() => injectButtons());
+    domObserver.observe(document.body, { childList: true, subtree: true });
+
+    // Initial injection attempt after a brief delay — many SPAs don't have the
+    // input rendered synchronously on DOMContentLoaded.
     setTimeout(injectButtons, 1500);
 })();
