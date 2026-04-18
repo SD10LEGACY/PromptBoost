@@ -1,9 +1,10 @@
 /**
- * PROMPTBOOST — CONTENT ENGINE v3.2
+ * PROMPTBOOST — CONTENT ENGINE
  * Shreyojit Das
  *
  * Intentionally thin. All AI calls and remote fetches are delegated to background.js
  * which is CSP-exempt. This file owns: DOM detection, text injection, UI lifecycle.
+ * can be made complex later but focusing on the basics for now
  */
 (function () {
     "use strict";
