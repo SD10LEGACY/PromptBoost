@@ -8,18 +8,11 @@ Sources:
   - Dev.to (public API — free, no key)
   - Reddit r/PromptEngineering, r/ChatGPT (JSON API — free, no key)
   - GitHub: awesome-chatgpt-prompts CSV (free, no key)
+  -more would be added soon. *wink*
 
 AI Engine Rotation (in order of preference per item):
   Gemini 2.0 Flash → Groq Llama3 → Mistral Small → OpenRouter Llama3 → skip
-
-Fixes over v1.0:
-  - [FIX] unique_db dedup: safe .get('text') guards crash on malformed entries
-  - [FIX] dict_values sliced via explicit list() before [-1000:]
-  - [FIX] Dev.to: single bulk fetch instead of one request per article
-  - [FIX] Added Reddit + GitHub harvesters for category diversity
-  - [FIX] Category diversity enforcer: max 5 prompts per tag per run
-  - [FIX] All output prompts include perplexity + grok in platforms[]
-  - [FIX] Exponential backoff on rate-limit (429) responses
+  Borlox hole BYOK 
 """
 
 import csv
