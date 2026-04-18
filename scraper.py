@@ -1,6 +1,6 @@
 """
 PromptBoost Auto-Scraper v2.0
-Shreyojit Das (Class of 2026, IEM)
+Shreyojit Das
 
 Sources:
   - YouTube (via YouTube Data API v3 + Transcript API)
@@ -10,7 +10,7 @@ Sources:
   - GitHub: awesome-chatgpt-prompts CSV (free, no key)
 
 AI Engine Rotation (in order of preference per item):
-  Gemini 2.0 Flash → Groq Llama3 → Mistral Small → OpenRouter Llama3 → skip
+  Gemini 2.0 Flash → Groq Llama3 → Mistral Small → OpenRouter Llama3 → skip (pore aro add kora jaabe LoL)
 
 Fixes over v1.0:
   - [FIX] unique_db dedup: safe .get('text') guards crash on malformed entries
@@ -22,235 +22,43 @@ Fixes over v1.0:
   - [FIX] Exponential backoff on rate-limit (429) responses
 """
 
-import os
-import sys
 import csv
 import json
-import time
+import logging
+import os
 import random
+import sys
+import time
+
 import requests
 from dotenv import load_dotenv
 from googleapiclient.discovery import build
 from youtube_transcript_api import YouTubeTranscriptApi
 
-# Load environment variables from the local .env file
-# (GitHub Actions will ignore this and use Repository Secrets automatically)
 load_dotenv()
 
-# Increase CSV field size limit to handle massive prompts
+# csv's default is absurdly small for long-form prompt content
 csv.field_size_limit(2147483647)
 
-# ─── 1. SECRETS ───────────────────────────────────────────────────────────────
-GEMINI_KEY      = os.getenv("GEMINI_API_KEY")
-GROQ_KEY        = os.getenv("GROQ_API_KEY")
-MISTRAL_KEY     = os.getenv("MISTRAL_API_KEY")
-OPENROUTER_KEY  = os.getenv("OPENROUTER_API_KEY")
-YOUTUBE_KEY     = os.getenv("YOUTUBE_API_KEY")
-DB_PATH         = "database/prompts.json"
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s  %(levelname)-7s %(message)s",
+    datefmt="%H:%M:%S",
+)
+log = logging.getLogger("promptboost")
 
-if not all([GEMINI_KEY, YOUTUBE_KEY]):
-    print("❌ GEMINI_API_KEY or YOUTUBE_API_KEY missing — check GitHub Secrets.")
-    raise SystemExit(1)
+# ─── CONSTANTS ────────────────────────────────────────────────────────────────
 
-youtube_client  = build("youtube", "v3", developerKey=YOUTUBE_KEY)
-raw_firehose    = []   # list of {"source": str, "text": str}
+GEMINI_KEY     = os.getenv("GEMINI_API_KEY")
+GROQ_KEY       = os.getenv("GROQ_API_KEY")
+MISTRAL_KEY    = os.getenv("MISTRAL_API_KEY")
+OPENROUTER_KEY = os.getenv("OPENROUTER_API_KEY")
+YOUTUBE_KEY    = os.getenv("YOUTUBE_API_KEY")
+DB_PATH        = "database/prompts.json"
 
-ALL_PLATFORMS   = ["chatgpt", "claude", "gemini", "perplexity", "grok"]
-MAX_PER_TAG     = 5    # diversity cap per run
-HEADERS         = {"User-Agent": "PromptBoost/2.0 (github.com/SD10LEGACY/PromptBoost)"}
-
-# ─── 2. HELPERS ───────────────────────────────────────────────────────────────
-def load_existing_db():
-    if os.path.exists(DB_PATH):
-        try:
-            with open(DB_PATH, "r", encoding="utf-8") as f:
-                return json.load(f)
-        except Exception:
-            return []
-    return []
-
-
-def safe_get(url, **kwargs):
-    """GET with retry on 429 (rate-limit) using exponential backoff."""
-    for attempt in range(4):
-        try:
-            r = requests.get(url, headers=HEADERS, timeout=12, **kwargs)
-            if r.status_code == 429:
-                wait = (2 ** attempt) + random.uniform(0, 1)
-                print(f"   ⏳ Rate limited — waiting {wait:.1f}s")
-                time.sleep(wait)
-                continue
-            return r
-        except requests.RequestException as e:
-            print(f"   ⚠️  Network error: {e}")
-            time.sleep(2)
-    return None
-
-
-def safe_post(url, **kwargs):
-    for attempt in range(3):
-        try:
-            r = requests.post(url, headers=HEADERS, timeout=15, **kwargs)
-            if r.status_code == 429:
-                time.sleep((2 ** attempt) + 1)
-                continue
-            return r
-        except requests.RequestException as e:
-            print(f"   ⚠️  Post error: {e}")
-    return None
-
-# ─── 3. HARVESTERS ────────────────────────────────────────────────────────────
-
-def harvest_youtube():
-    print("\n📺 YouTube Transcripts...")
-    queries = [
-        "best chatgpt prompts 2025 tutorial",
-        "advanced claude prompts guide",
-        "gemini AI prompts tips",
-        "prompt engineering techniques 2025",
-        "perplexity AI prompts",
-    ]
-    for q in queries[:4]:
-        try:
-            search = youtube_client.search().list(
-                q=q, part="snippet", type="video", maxResults=3
-            ).execute()
-            for item in search.get("items", []):
-                v_id = item["id"].get("videoId")
-                if not v_id:
-                    continue
-                try:
-                    transcript = YouTubeTranscriptApi.get_transcript(v_id, languages=["en"])
-                    text = " ".join(t["text"] for t in transcript)
-                    title = item["snippet"]["title"]
-                    raw_firehose.append({
-                        "source": "youtube",
-                        "text": f"Video Title: {title}\nTranscript:\n{text[:4000]}"
-                    })
-                    print(f"   ✅ {title[:60]}")
-                except Exception:
-                    pass
-        except Exception as e:
-            print(f"   ⚠️  YouTube query '{q}': {e}")
-
-
-def harvest_hackernews():
-    print("\n🟧 Hacker News...")
-    url = "https://hn.algolia.com/api/v1/search?query=AI+prompt+engineering&tags=story&hitsPerPage=8"
-    r = safe_get(url)
-    if not r:
-        return
-    for hit in r.json().get("hits", []):
-        content = f"Title: {hit.get('title', '')}\n{hit.get('story_text', '') or ''}"
-        if len(content.strip()) > 40:
-            raw_firehose.append({"source": "hacker_news", "text": content})
-    print(f"   ✅ {len(r.json().get('hits', []))} items")
-
-
-def harvest_devto():
-    """Single request for article list; use body_html stripped of tags as content."""
-    print("\n👩‍💻 Dev.to...")
-    url = "https://dev.to/api/articles?tag=promptengineering&top=5&per_page=8"
-    r = safe_get(url)
-    if not r:
-        return
-    articles = r.json()
-    count = 0
-    for article in articles[:6]:
-        # Use description + title — avoids per-article requests that were hitting rate limits
-        content = f"Title: {article.get('title', '')}\n{article.get('description', '')}"
-        if len(content.strip()) > 40:
-            raw_firehose.append({"source": "dev_to", "text": content})
-            count += 1
-    print(f"   ✅ {count} items")
-
-
-def harvest_reddit():
-    """
-    Scrapes r/PromptEngineering and r/ChatGPT top posts of the week.
-    Uses Reddit's public .json endpoint — no OAuth key required.
-    """
-    print("\n🔴 Reddit...")
-    subreddits = [
-        "PromptEngineering",
-        "ChatGPT",
-        "ClaudeAI",
-    ]
-    count = 0
-    for sub in subreddits:
-        url = f"https://www.reddit.com/r/{sub}/top.json?limit=10&t=week"
-        r = safe_get(url)
-        if not r:
-            continue
-        try:
-            posts = r.json()["data"]["children"]
-            for post in posts:
-                d = post["data"]
-                title   = d.get("title", "")
-                selftext = d.get("selftext", "")
-                if len(selftext.strip()) < 20:
-                    continue
-                raw_firehose.append({
-                    "source": f"reddit_{sub.lower()}",
-                    "text": f"Post Title: {title}\nContent:\n{selftext[:3000]}"
-                })
-                count += 1
-        except Exception as e:
-            print(f"   ⚠️  r/{sub}: {e}")
-        time.sleep(1.2)  # Reddit rate-limit: ~1 req/sec
-    print(f"   ✅ {count} Reddit posts")
-
-
-def harvest_github_awesome_prompts():
-    """
-    Pulls the entire 'awesome-chatgpt-prompts' CSV (~160 high-quality prompts).
-    Direct load — no AI processing needed, these are already clean prompts.
-    """
-    print("\n⭐ GitHub Awesome Prompts CSV...")
-    url = "https://raw.githubusercontent.com/f/awesome-chatgpt-prompts/main/prompts.csv"
-    r = safe_get(url)
-    if not r:
-        return []
-
-    existing_db   = load_existing_db()
-    existing_texts = {p.get("text", "").lower().strip()[:100] for p in existing_db}
-
-    direct_prompts = []
-    reader = csv.DictReader(r.text.splitlines())
-    for i, row in enumerate(reader):
-        act  = row.get("act", "").strip()
-        text = row.get("prompt", "").strip()
-        if not text or text.lower()[:100] in existing_texts:
-            continue
-        # Classify tag by keywords in the act label
-        tag = "General"
-        lower_act = act.lower()
-        if any(k in lower_act for k in ["code", "python", "javascript", "linux", "terminal", "sql", "developer"]):
-            tag = "Coding"
-        elif any(k in lower_act for k in ["write", "essay", "novel", "story", "poet", "journal"]):
-            tag = "Writing"
-        elif any(k in lower_act for k in ["market", "advertis", "sales", "seo", "social"]):
-            tag = "Marketing"
-        elif any(k in lower_act for k in ["teach", "tutor", "explain", "math", "science", "research"]):
-            tag = "Research"
-        elif any(k in lower_act for k in ["chef", "food", "recipe", "travel", "fitness", "health"]):
-            tag = "Lifestyle"
-        elif any(k in lower_act for k in ["dream", "story", "game", "role", "fiction", "creative"]):
-            tag = "Creative"
-
-        direct_prompts.append({
-            "id":        1700000 + i,
-            "title":     act,
-            "tag":       tag,
-            "platforms": ALL_PLATFORMS,
-            "text":      text,
-            "source":    "github_awesome",
-        })
-
-    print(f"   ✅ {len(direct_prompts)} new prompts from awesome-chatgpt-prompts")
-    return direct_prompts
-
-# ─── 4. AI ENGINE ROTATION ────────────────────────────────────────────────────
+ALL_PLATFORMS = ["chatgpt", "claude", "gemini", "perplexity", "grok"]
+MAX_PER_TAG   = 5
+HEADERS       = {"User-Agent": "PromptBoost/2.0 (github.com/SD10LEGACY/PromptBoost)"}
 
 SYSTEM_PROMPT = """You are a Staff Prompt Engineer. 
 Extract the single most actionable, reusable AI prompt from the text.
@@ -263,8 +71,217 @@ Otherwise, output ONLY a raw JSON object (no markdown, no preamble):
     "text": "The full, ready-to-use engineered prompt with no placeholders"
 }"""
 
+if not all([GEMINI_KEY, YOUTUBE_KEY]):
+    log.critical("GEMINI_API_KEY or YOUTUBE_API_KEY missing — check GitHub Secrets.")
+    raise SystemExit(1)
 
-def ask_gemini(text):
+youtube_client = build("youtube", "v3", developerKey=YOUTUBE_KEY)
+raw_firehose: list[dict] = []
+
+
+# ─── HELPERS ──────────────────────────────────────────────────────────────────
+
+def load_existing_db() -> list:
+    if not os.path.exists(DB_PATH):
+        return []
+    try:
+        with open(DB_PATH, "r", encoding="utf-8") as f:
+            return json.load(f)
+    except (json.JSONDecodeError, OSError) as e:
+        log.warning("DB at %s is corrupt or unreadable (%s) — starting fresh.", DB_PATH, e)
+        return []
+
+
+def safe_get(url: str, **kwargs) -> requests.Response | None:
+    """GET with exponential backoff on 429. Returns None after 4 failed attempts."""
+    for attempt in range(4):
+        try:
+            r = requests.get(url, headers=HEADERS, timeout=12, **kwargs)
+            if r.status_code == 429:
+                wait = (2 ** attempt) + random.uniform(0, 1)
+                log.warning("Rate-limited on GET — backing off %.1fs (attempt %d/4)", wait, attempt + 1)
+                time.sleep(wait)
+                continue
+            return r
+        except requests.RequestException as e:
+            log.warning("Network error on GET attempt %d: %s", attempt + 1, e)
+            time.sleep(2)
+    return None
+
+
+def safe_post(url: str, **kwargs) -> requests.Response | None:
+    for attempt in range(3):
+        try:
+            r = requests.post(url, headers=HEADERS, timeout=15, **kwargs)
+            if r.status_code == 429:
+                wait = (2 ** attempt) + 1
+                log.warning("Rate-limited on POST — backing off %.1fs", wait)
+                time.sleep(wait)
+                continue
+            return r
+        except requests.RequestException as e:
+            log.warning("Network error on POST attempt %d: %s", attempt + 1, e)
+    return None
+
+
+# ─── HARVESTERS ───────────────────────────────────────────────────────────────
+
+def harvest_youtube():
+    log.info("▶  Harvesting YouTube transcripts...")
+    queries = [
+        "best chatgpt prompts 2025 tutorial",
+        "advanced claude prompts guide",
+        "gemini AI prompts tips",
+        "prompt engineering techniques 2025",
+    ]
+    for q in queries:
+        try:
+            search = youtube_client.search().list(
+                q=q, part="snippet", type="video", maxResults=3
+            ).execute()
+            for item in search.get("items", []):
+                v_id = item["id"].get("videoId")
+                if not v_id:
+                    continue
+                try:
+                    transcript = YouTubeTranscriptApi.get_transcript(v_id, languages=["en"])
+                    body = " ".join(t["text"] for t in transcript)
+                    title = item["snippet"]["title"]
+                    raw_firehose.append({
+                        "source": "youtube",
+                        "text": f"Video Title: {title}\nTranscript:\n{body[:4000]}"
+                    })
+                    log.info("   ✓ %s", title[:70])
+                except Exception:
+                    pass
+        except Exception as e:
+            log.warning("YouTube query '%s' failed: %s", q, e)
+
+
+def harvest_hackernews():
+    log.info("▶  Harvesting Hacker News...")
+    url = "https://hn.algolia.com/api/v1/search?query=AI+prompt+engineering&tags=story&hitsPerPage=8"
+    r = safe_get(url)
+    if not r:
+        log.warning("HN harvest skipped — no response.")
+        return
+    try:
+        hits = r.json().get("hits", [])
+    except ValueError:
+        log.warning("HN harvest skipped — response was not valid JSON.")
+        return
+    for hit in hits:
+        content = f"Title: {hit.get('title', '')}\n{hit.get('story_text', '') or ''}"
+        if len(content.strip()) > 40:
+            raw_firehose.append({"source": "hacker_news", "text": content})
+    log.info("   ✓ %d items", len(hits))
+
+
+def harvest_devto():
+    # Using description+title only — full article body requires one req/article and
+    # we kept hitting dev.to's undocumented burst limit last time around.
+    log.info("▶  Harvesting Dev.to...")
+    url = "https://dev.to/api/articles?tag=promptengineering&top=5&per_page=8"
+    r = safe_get(url)
+    if not r:
+        log.warning("Dev.to harvest skipped — no response.")
+        return
+    articles = r.json()
+    ingested = 0
+    for article in articles[:6]:
+        content = f"Title: {article.get('title', '')}\n{article.get('description', '')}"
+        if len(content.strip()) > 40:
+            raw_firehose.append({"source": "dev_to", "text": content})
+            ingested += 1
+    log.info("   ✓ %d items", ingested)
+
+
+def harvest_reddit():
+    """
+    Scrapes r/PromptEngineering, r/ChatGPT, and r/ClaudeAI top posts of the week.
+    Reddit's public .json endpoint requires no OAuth — but enforces ~1 req/sec.
+    """
+    log.info("▶  Harvesting Reddit...")
+    subreddits = ["PromptEngineering", "ChatGPT", "ClaudeAI"]
+    ingested = 0
+    for sub in subreddits:
+        url = f"https://www.reddit.com/r/{sub}/top.json?limit=10&t=week"
+        r = safe_get(url)
+        if not r:
+            log.warning("   r/%s skipped — no response.", sub)
+            continue
+        try:
+            posts = r.json()["data"]["children"]
+            for post in posts:
+                d = post["data"]
+                selftext = d.get("selftext", "")
+                if len(selftext.strip()) < 20:
+                    continue
+                raw_firehose.append({
+                    "source": f"reddit_{sub.lower()}",
+                    "text": f"Post Title: {d.get('title', '')}\nContent:\n{selftext[:3000]}"
+                })
+                ingested += 1
+        except (KeyError, ValueError) as e:
+            log.warning("   r/%s parse error: %s", sub, e)
+        time.sleep(1.2)  # Reddit will 429 you instantly if you skip this
+    log.info("   ✓ %d Reddit posts", ingested)
+
+
+def harvest_github_awesome_prompts() -> list:
+    """
+    Pulls the entire awesome-chatgpt-prompts CSV (~160 curated prompts).
+    These land directly in the DB — no AI extraction pass needed.
+    """
+    log.info("▶  Harvesting awesome-chatgpt-prompts CSV...")
+    url = "https://raw.githubusercontent.com/f/awesome-chatgpt-prompts/main/prompts.csv"
+    r = safe_get(url)
+    if not r:
+        log.warning("GitHub harvest skipped — no response.")
+        return []
+
+    existing_db = load_existing_db()
+    existing_fingerprints = {p.get("text", "").lower().strip()[:100] for p in existing_db}
+
+    tag_keywords = {
+        "Coding":    ["code", "python", "javascript", "linux", "terminal", "sql", "developer"],
+        "Writing":   ["write", "essay", "novel", "story", "poet", "journal"],
+        "Marketing": ["market", "advertis", "sales", "seo", "social"],
+        "Research":  ["teach", "tutor", "explain", "math", "science", "research"],
+        "Lifestyle": ["chef", "food", "recipe", "travel", "fitness", "health"],
+        "Creative":  ["dream", "story", "game", "role", "fiction", "creative"],
+    }
+
+    harvested = []
+    reader = csv.DictReader(r.text.splitlines())
+    for i, row in enumerate(reader):
+        act  = row.get("act", "").strip()
+        text = row.get("prompt", "").strip()
+        if not text or text.lower()[:100] in existing_fingerprints:
+            continue
+
+        lower_act = act.lower()
+        tag = next(
+            (t for t, keywords in tag_keywords.items() if any(k in lower_act for k in keywords)),
+            "General"
+        )
+
+        harvested.append({
+            "id":        1700000 + i,
+            "title":     act,
+            "tag":       tag,
+            "platforms": ALL_PLATFORMS,
+            "text":      text,
+            "source":    "github_awesome",
+        })
+
+    log.info("   ✓ %d new prompts from awesome-chatgpt-prompts", len(harvested))
+    return harvested
+
+
+# ─── AI ENGINE ROTATION ───────────────────────────────────────────────────────
+
+def ask_gemini(text: str) -> str:
     url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key={GEMINI_KEY}"
     payload = {"contents": [{"parts": [{"text": f"{SYSTEM_PROMPT}\n\n<source>\n{text[:5000]}\n</source>"}]}]}
     r = safe_post(url, json=payload)
@@ -273,9 +290,9 @@ def ask_gemini(text):
     raise Exception(f"Gemini HTTP {r.status_code if r else 'no response'}")
 
 
-def ask_groq(text):
+def ask_groq(text: str) -> str:
     if not GROQ_KEY:
-        raise Exception("No GROQ_KEY")
+        raise Exception("GROQ_KEY not configured")
     r = safe_post(
         "https://api.groq.com/openai/v1/chat/completions",
         headers={"Authorization": f"Bearer {GROQ_KEY}", "Content-Type": "application/json"},
@@ -289,9 +306,9 @@ def ask_groq(text):
     raise Exception(f"Groq HTTP {r.status_code if r else 'no response'}")
 
 
-def ask_mistral(text):
+def ask_mistral(text: str) -> str:
     if not MISTRAL_KEY:
-        raise Exception("No MISTRAL_KEY")
+        raise Exception("MISTRAL_KEY not configured")
     r = safe_post(
         "https://api.mistral.ai/v1/chat/completions",
         headers={"Authorization": f"Bearer {MISTRAL_KEY}", "Content-Type": "application/json"},
@@ -305,9 +322,9 @@ def ask_mistral(text):
     raise Exception(f"Mistral HTTP {r.status_code if r else 'no response'}")
 
 
-def ask_openrouter(text):
+def ask_openrouter(text: str) -> str:
     if not OPENROUTER_KEY:
-        raise Exception("No OPENROUTER_KEY")
+        raise Exception("OPENROUTER_KEY not configured")
     r = safe_post(
         "https://openrouter.ai/api/v1/chat/completions",
         headers={"Authorization": f"Bearer {OPENROUTER_KEY}", "Content-Type": "application/json"},
@@ -322,103 +339,104 @@ def ask_openrouter(text):
 
 
 ENGINES = [
-    ("Gemini",      ask_gemini),
-    ("Groq",        ask_groq),
-    ("Mistral",     ask_mistral),
-    ("OpenRouter",  ask_openrouter),
+    ("Gemini",     ask_gemini),
+    ("Groq",       ask_groq),
+    ("Mistral",    ask_mistral),
+    ("OpenRouter", ask_openrouter),
 ]
 
 
-def process_with_ai(tag_counts):
-    print(f"\n🧠 AI Processing {len(raw_firehose)} raw items...")
-    refined = []
-    for i, item in enumerate(raw_firehose[:25]):
-        print(f"  [{i+1}/{min(25, len(raw_firehose))}] ", end="", flush=True)
+def process_with_ai(tag_counts: dict) -> list:
+    batch = raw_firehose[:25]
+    log.info("▶  AI processing %d raw items (capped at 25)...", len(batch))
+    extracted_prompts = []
+
+    for i, item in enumerate(batch):
+        log.info("  [%d/%d] source=%s", i + 1, len(batch), item["source"])
         for engine_name, engine_fn in ENGINES:
             try:
                 raw_output = engine_fn(item["text"])
+
                 if "SKIP" in raw_output.upper()[:20]:
-                    print(f"⏭️  SKIP ({engine_name})")
+                    log.info("   ↷  SKIP signal from %s", engine_name)
                     break
 
                 clean = raw_output.replace("```json", "").replace("```", "").strip()
                 p = json.loads(clean)
 
-                # Enforce diversity cap
+                # Guard against engines that hallucinate partial JSON
+                if not all(k in p for k in ("title", "tag", "text")):
+                    log.warning("   %s returned incomplete JSON — trying next engine.", engine_name)
+                    continue
+
                 tag = p.get("tag", "General")
                 if tag_counts.get(tag, 0) >= MAX_PER_TAG:
-                    print(f"⏭️  Capped tag '{tag}' ({engine_name})")
+                    log.info("   ↷  Tag '%s' at cap — skipping (%s)", tag, engine_name)
                     break
 
                 p["id"]        = int(time.time()) + i + random.randint(0, 999)
                 p["source"]    = item["source"]
-                p["platforms"] = ALL_PLATFORMS  # always include all 5
+                p["platforms"] = ALL_PLATFORMS
 
-                refined.append(p)
+                extracted_prompts.append(p)
                 tag_counts[tag] = tag_counts.get(tag, 0) + 1
-                print(f"✨ '{p['title']}' [{tag}] via {engine_name}")
+                log.info("   ✨ '%s' [%s] via %s", p["title"], tag, engine_name)
                 break
+
             except json.JSONDecodeError:
-                continue   # try next engine
+                log.warning("   %s returned non-JSON — trying next engine.", engine_name)
+                continue
             except Exception as e:
-                print(f" ({engine_name} err: {e.__class__.__name__})", end="")
+                log.warning("   %s failed (%s: %s) — trying next engine.", engine_name, type(e).__name__, e)
                 continue
         else:
-            print("❌ All engines failed")
+            log.error("   ✗  All engines exhausted for item %d.", i + 1)
         time.sleep(2)
-    return refined
+
+    return extracted_prompts
 
 
-# ─── 5. EXECUTION ─────────────────────────────────────────────────────────────
+# ─── MAIN ─────────────────────────────────────────────────────────────────────
+
 if __name__ == "__main__":
     existing_db = load_existing_db()
-    print(f"📦 Existing DB: {len(existing_db)} prompts")
+    log.info("DB loaded: %d existing prompts.", len(existing_db))
 
-    # Count existing tags for diversity enforcement
     tag_counts = {}
     for p in existing_db:
         t = p.get("tag", "General")
         tag_counts[t] = tag_counts.get(t, 0) + 1
 
-    # Run all harvesters
     harvest_youtube()
     harvest_hackernews()
     harvest_devto()
     harvest_reddit()
 
-    # Direct-inject GitHub awesome prompts (no AI processing needed — already clean)
-    direct_prompts = harvest_github_awesome_prompts()
+    direct_prompts   = harvest_github_awesome_prompts()
+    ai_prompts       = process_with_ai(tag_counts)
 
-    # AI processing of scraped raw text
-    ai_prompts = process_with_ai(tag_counts)
+    combined = existing_db + direct_prompts + ai_prompts
 
-    # Merge: existing + direct + AI-generated
-    all_prompts = existing_db + direct_prompts + ai_prompts
+    seen: set[str] = set()
+    deduped: list[dict] = []
+    for p in combined:
+        fingerprint = p.get("text", "").lower().strip()[:120]
+        if not fingerprint or fingerprint in seen:
+            continue
+        seen.add(fingerprint)
+        p["platforms"] = ALL_PLATFORMS
+        deduped.append(p)
 
-    # Deduplicate by first 120 chars of text (safe .get() guards malformed entries)
-    seen  = set()
-    dedup = []
-    for p in all_prompts:
-        key = p.get("text", "").lower().strip()[:120]
-        if key and key not in seen:
-            seen.add(key)
-            # Ensure all prompts have all platforms
-            p["platforms"] = ALL_PLATFORMS
-            dedup.append(p)
-
-    # Keep newest 1000
-    final_db = list(dedup)[-1000:]
+    final_db = deduped[-1000:]
 
     os.makedirs("database", exist_ok=True)
     with open(DB_PATH, "w", encoding="utf-8") as f:
         json.dump(final_db, f, indent=4, ensure_ascii=False)
 
-    # Summary
-    final_tags = {}
+    tag_tally = {}
     for p in final_db:
         t = p.get("tag", "?")
-        final_tags[t] = final_tags.get(t, 0) + 1
+        tag_tally[t] = tag_tally.get(t, 0) + 1
 
-    print(f"\n✅ Pipeline Complete!")
-    print(f"   Total prompts: {len(final_db)}")
-    print(f"   Tag breakdown: {json.dumps(final_tags, indent=4)}")
+    log.info("Pipeline complete. %d prompts written.", len(final_db))
+    log.info("Tag breakdown: %s", json.dumps(tag_tally))
