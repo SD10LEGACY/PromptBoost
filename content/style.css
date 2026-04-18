@@ -1,42 +1,53 @@
-/* PromptBoost Master Stylesheet 
-    Theme: Constructivist Bauhaus / Adaptive Native
-    Architecture: Class-of-2026 IEM Pro Edition
-*/
+/* PromptBoost Master Stylesheet — Constructivist Bauhaus / Adaptive Native */
 
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;700;900&family=Space+Mono&display=swap');
 
-/* --- 1. DESIGN TOKENS & DYNAMIC VARS --- */
-:root {
-    /* Bauhaus Core Palette */
-    --pb-red: #D02020;
-    --pb-blue: #1040C0;
-    --pb-yellow: #F0C020;
-    --pb-fg: #121212;
-    --pb-bg: #F0F0F0;
-    --pb-white: #FFFFFF;
+/* --- 1. DESIGN TOKENS --- */
 
-    /* Default Adaptive Tokens (ChatGPT Defaults) */
-    --pb-accent: #10a37f;
+:root {
+    --pb-red:    #D02020;
+    --pb-blue:   #1040C0;
+    --pb-yellow: #F0C020;
+    --pb-fg:     #121212;
+    --pb-bg:     #F0F0F0;
+    --pb-white:  #FFFFFF;
+
+    /* ChatGPT defaults — overridden per platform below */
+    --pb-accent:      #10a37f;
     --pb-accent-soft: rgba(16, 163, 127, 0.1);
-    --pb-radius: 8px;
-    --pb-font: 'Outfit', sans-serif;
-    --pb-mono: 'Space Mono', monospace;
+    --pb-radius:      8px;
+    --pb-font:        'Outfit', sans-serif;
+    --pb-mono:        'Space Mono', monospace;
 }
 
 /* --- 2. PLATFORM ADAPTATION --- */
 
-/* Claude.ai Overrides */
+/* Claude.ai */
 body.pb-platform-claude {
-    --pb-accent: #d97757;
+    --pb-accent:      #d97757;
     --pb-accent-soft: rgba(217, 119, 87, 0.1);
-    --pb-radius: 20px;
+    --pb-radius:      20px;
 }
 
-/* Gemini Overrides */
+/* Gemini */
 body.pb-platform-gemini {
-    --pb-accent: #4285f4;
+    --pb-accent:      #4285f4;
     --pb-accent-soft: rgba(66, 133, 244, 0.1);
-    --pb-radius: 28px;
+    --pb-radius:      28px;
+}
+
+/* Perplexity */
+body.pb-platform-perplexity {
+    --pb-accent:      #20B2AA;
+    --pb-accent-soft: rgba(32, 178, 170, 0.1);
+    --pb-radius:      12px;
+}
+
+/* Grok */
+body.pb-platform-grok {
+    --pb-accent:      #1DA1F2;
+    --pb-accent-soft: rgba(29, 161, 242, 0.1);
+    --pb-radius:      16px;
 }
 
 /* --- 3. NATIVE INJECTION UI (The "No-Clip" Fix) --- */
@@ -81,7 +92,6 @@ body.pb-platform-gemini {
     transform: translateY(0);
 }
 
-/* Wand / Boost Specific Styling */
 .pb-wand-btn {
     border: 1px solid rgba(128, 128, 128, 0.1);
 }
@@ -99,7 +109,6 @@ body.pb-platform-gemini {
     position: fixed;
     top: 0;
     right: -420px;
-    /* Precise hidden state */
     width: 400px;
     height: 100vh;
     background: var(--pb-bg);
@@ -116,7 +125,7 @@ body.pb-platform-gemini {
     right: 0;
 }
 
-/* Sidebar Header (Yellow Block) */
+/* Yellow block header */
 .pb-sidebar-header {
     padding: 30px 24px;
     background: var(--pb-yellow);
@@ -178,7 +187,7 @@ body.pb-platform-gemini {
 .pb-sidebar-content {
     flex: 1;
     overflow-y: scroll;
-    /* Force scrollbar for Bauhaus look */
+    /* forced visible scrollbar is an intentional Bauhaus design element */
     padding: 24px;
     background-image:
         radial-gradient(var(--pb-fg) 1px, transparent 1px),
@@ -188,7 +197,6 @@ body.pb-platform-gemini {
     background-position: center center;
 }
 
-/* Custom Scrollbar (Bauhaus Industrial) */
 .pb-sidebar-content::-webkit-scrollbar {
     width: 12px;
     background: var(--pb-bg);
@@ -220,7 +228,6 @@ body.pb-platform-gemini {
     box-shadow: 12px 12px 0px var(--pb-fg);
 }
 
-/* Geometric Decoration */
 .pb-card-deco {
     position: absolute;
     top: -10px;
@@ -247,28 +254,39 @@ body.pb-platform-gemini {
 
 .pb-card-title {
     margin: 10px 0;
-    font-size: 20px;
-    font-weight: 700;
+    font-size: 16px;
+    font-weight: 900;
     text-transform: uppercase;
-    line-height: 1.1;
+    line-height: 1.2;
     color: var(--pb-fg);
+    word-wrap: break-word;
 }
 
 .pb-card-preview {
-    font-size: 14px;
-    line-height: 1.6;
+    font-size: 13px;
+    line-height: 1.5;
     color: #444;
     margin-bottom: 20px;
     font-family: var(--pb-font);
     border-left: 2px solid var(--pb-blue);
     padding-left: 12px;
+    /* line-clamp so long prompts fade out instead of blowing up card height */
+    display: -webkit-box;
+    -webkit-line-clamp: 4;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
 }
 
-/* Card Action Button */
+.pb-card-preview.pb-expanded {
+    -webkit-line-clamp: unset;
+    overflow: visible;
+}
+
 .pb-use-btn {
     width: 100%;
     background: var(--pb-white);
     border: 3px solid var(--pb-fg);
+    color: var(--pb-fg);
     padding: 12px;
     font-family: var(--pb-font);
     font-weight: 900;
@@ -292,205 +310,6 @@ body.pb-platform-gemini {
     box-shadow: 0px 0px 0px var(--pb-fg);
 }
 
-/* --- 7. ANIMATIONS & UTILS --- */
-
-@keyframes pb-mechanical-pulse {
-    0% {
-        transform: scale(1);
-        box-shadow: 0 0 0 var(--pb-fg);
-    }
-
-    100% {
-        transform: scale(1.05);
-        box-shadow: 4px 4px 0 var(--pb-fg);
-    }
-}
-
-.pb-loader-text {
-    text-align: center;
-    padding: 60px 0;
-    font-family: var(--pb-mono);
-    font-weight: 700;
-    color: var(--pb-fg);
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    animation: pb-blink 1s infinite steps(2);
-}
-
-@keyframes pb-blink {
-    50% {
-        opacity: 0;
-    }
-}
-
-/* Notifications / Status Overlay */
-.pb-status-msg {
-    position: fixed;
-    bottom: 30px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: var(--pb-fg);
-    color: var(--pb-white);
-    padding: 12px 24px;
-    font-family: var(--pb-mono);
-    font-weight: 700;
-    border: 4px solid var(--pb-blue);
-    box-shadow: 8px 8px 0px rgba(0, 0, 0, 0.2);
-    z-index: 100000000;
-}
-
-/* 🏁 END OF 300 LINE MASTER STYLESHEET */
-/* --- PERPLEXITY --- */
-body.pb-platform-perplexity {
-    --pb-accent: #20B2AA;
-    --pb-accent-soft: rgba(32, 178, 170, 0.1);
-    --pb-radius: 12px;
-}
-
-/* --- GROK --- */
-body.pb-platform-grok {
-    --pb-accent: #1DA1F2;
-    --pb-accent-soft: rgba(29, 161, 242, 0.1);
-    --pb-radius: 16px;
-}
-
-/* --- UI FIXES & UPGRADES --- */
-
-/* Fix 1: The Invisible Button */
-.pb-use-btn {
-    width: 100%;
-    background: var(--pb-white);
-    border: 3px solid var(--pb-fg);
-    color: var(--pb-fg);
-    /* 🟢 ADDED: Fixes white-on-white text */
-    padding: 12px;
-    font-family: var(--pb-font);
-    font-weight: 900;
-    text-transform: uppercase;
-    cursor: pointer;
-    box-shadow: 5px 5px 0px var(--pb-fg);
-    transition: 0.1s;
-}
-
-/* Fix 2: Stop Text Clipping */
-.pb-card-title {
-    margin: 10px 0;
-    font-size: 16px;
-    /* Slightly smaller for long titles */
-    font-weight: 900;
-    text-transform: uppercase;
-    line-height: 1.2;
-    color: var(--pb-fg);
-    word-wrap: break-word;
-}
-
-.pb-card-preview {
-    font-size: 13px;
-    line-height: 1.5;
-    color: #444;
-    margin-bottom: 20px;
-    font-family: var(--pb-font);
-    border-left: 2px solid var(--pb-blue);
-    padding-left: 12px;
-    /* 🟢 ADDED: Line clamping so text fades out instead of clipping */
-    display: -webkit-box;
-    -webkit-line-clamp: 4;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-}
-
-/* --- NEW FEATURE STYLES --- */
-
-.pb-sidebar-controls {
-    padding: 15px 24px;
-    background: #e5e5e5;
-    border-bottom: 4px solid var(--pb-fg);
-    display: flex;
-    gap: 10px;
-}
-
-.pb-search-input,
-.pb-category-select {
-    padding: 8px;
-    border: 2px solid var(--pb-fg);
-    font-family: var(--pb-mono);
-    font-size: 12px;
-    background: var(--pb-white);
-    color: var(--pb-fg);
-}
-
-.pb-search-input {
-    flex: 1;
-}
-
-.pb-search-input:focus {
-    outline: 2px solid var(--pb-blue);
-}
-
-.pb-source-badge {
-    display: inline-block;
-    background: var(--pb-accent-soft);
-    color: var(--pb-accent);
-    padding: 3px 8px;
-    font-family: var(--pb-mono);
-    font-size: 10px;
-    font-weight: 700;
-    border-radius: 4px;
-    margin-bottom: 8px;
-    text-transform: uppercase;
-}
-
-/* --- PROMPTBOOST UI v5.1 UPGRADES --- */
-
-/* Fix the White-on-White Inject Button */
-.pb-use-btn {
-    width: 100%;
-    background: var(--pb-white);
-    border: 3px solid var(--pb-fg);
-    color: var(--pb-fg);
-    /* Forces text to be dark */
-    padding: 12px;
-    font-family: var(--pb-font);
-    font-weight: 900;
-    text-transform: uppercase;
-    cursor: pointer;
-    box-shadow: 5px 5px 0px var(--pb-fg);
-    transition: 0.1s;
-}
-
-/* Card Titles & Previews */
-.pb-card-title {
-    margin: 10px 0;
-    font-size: 16px;
-    font-weight: 900;
-    text-transform: uppercase;
-    line-height: 1.2;
-    color: var(--pb-fg);
-    word-wrap: break-word;
-}
-
-.pb-card-preview {
-    font-size: 13px;
-    line-height: 1.5;
-    color: #444;
-    margin-bottom: 5px;
-    font-family: var(--pb-font);
-    border-left: 2px solid var(--pb-blue);
-    padding-left: 12px;
-    display: -webkit-box;
-    -webkit-line-clamp: 4;
-    /* Clips at 4 lines */
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-}
-
-/* When the user clicks Read More */
-.pb-card-preview.pb-expanded {
-    -webkit-line-clamp: unset;
-    overflow: visible;
-}
-
-/* The Read More Button */
 .pb-expand-btn {
     background: none;
     border: none;
@@ -508,7 +327,8 @@ body.pb-platform-grok {
     color: var(--pb-red);
 }
 
-/* Search & Filter Controls */
+/* --- 7. SEARCH & FILTER CONTROLS --- */
+
 .pb-sidebar-controls {
     padding: 15px 24px;
     background: #e5e5e5;
@@ -546,4 +366,41 @@ body.pb-platform-grok {
     border-radius: 4px;
     margin-bottom: 8px;
     text-transform: uppercase;
+}
+
+/* --- 8. ANIMATIONS & UTILS --- */
+
+@keyframes pb-mechanical-pulse {
+    0%   { transform: scale(1);    box-shadow: 0 0 0 var(--pb-fg); }
+    100% { transform: scale(1.05); box-shadow: 4px 4px 0 var(--pb-fg); }
+}
+
+.pb-loader-text {
+    text-align: center;
+    padding: 60px 0;
+    font-family: var(--pb-mono);
+    font-weight: 700;
+    color: var(--pb-fg);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    animation: pb-blink 1s infinite steps(2);
+}
+
+@keyframes pb-blink {
+    50% { opacity: 0; }
+}
+
+.pb-status-msg {
+    position: fixed;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--pb-fg);
+    color: var(--pb-white);
+    padding: 12px 24px;
+    font-family: var(--pb-mono);
+    font-weight: 700;
+    border: 4px solid var(--pb-blue);
+    box-shadow: 8px 8px 0px rgba(0, 0, 0, 0.2);
+    z-index: 100000000;
 }
