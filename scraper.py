@@ -1,5 +1,5 @@
 """
-PromptBoost Auto-Scraper v2.0
+PromptBoost Auto-Scraper
 Shreyojit Das
 
 Sources:
@@ -10,7 +10,7 @@ Sources:
   - GitHub: awesome-chatgpt-prompts CSV (free, no key)
 
 AI Engine Rotation (in order of preference per item):
-  Gemini 2.0 Flash → Groq Llama3 → Mistral Small → OpenRouter Llama3 → skip (pore aro add kora jaabe LoL)
+  Gemini 2.0 Flash → Groq Llama3 → Mistral Small → OpenRouter Llama3 → skip
 
 Fixes over v1.0:
   - [FIX] unique_db dedup: safe .get('text') guards crash on malformed entries
