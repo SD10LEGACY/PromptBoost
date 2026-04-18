@@ -10,38 +10,34 @@
     href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Outfit:wght@500;700;900&display=swap"
     rel="stylesheet">
   <style>
-    *,
-    *::before,
-    *::after {
+    *, *::before, *::after {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
     }
 
-    /* ── 1. BAUHAUS DESIGN TOKENS ── */
+    /* --- 1. DESIGN TOKENS --- */
     :root {
-      --red: #D02020;
-      --blue: #1040C0;
-      --yellow: #F0C020;
-      --black: #121212;
-      --white: #F0F0F0;
-      /* Off-white canvas */
+      --red:        #D02020;
+      --blue:       #1040C0;
+      --yellow:     #F0C020;
+      --black:      #121212;
+      --white:      #F0F0F0;
       --pure-white: #FFFFFF;
 
       --border-thick: 4px solid #121212;
-      --border-thin: 2px solid #121212;
+      --border-thin:  2px solid #121212;
 
       --shadow-sm: 4px 4px 0px 0px #121212;
       --shadow-md: 6px 6px 0px 0px #121212;
       --shadow-lg: 8px 8px 0px 0px #121212;
 
       --font-display: 'Outfit', sans-serif;
-      --font-mono: 'Space Mono', monospace;
+      --font-mono:    'Space Mono', monospace;
     }
 
     body {
       width: 380px;
-      /* Slightly wider to accommodate bold layouts */
       background: var(--white);
       color: var(--black);
       font-family: var(--font-display);
@@ -49,7 +45,7 @@
       border: var(--border-thick);
     }
 
-    /* ── 2. GEOMETRIC HEADER ── */
+    /* --- 2. GEOMETRIC HEADER --- */
     .header {
       background: var(--red);
       border-bottom: var(--border-thick);
@@ -58,7 +54,6 @@
       overflow: hidden;
     }
 
-    /* Abstract background geometry */
     .header::before {
       content: '';
       position: absolute;
@@ -95,7 +90,7 @@
       text-shadow: 3px 3px 0px var(--black);
     }
 
-    /* ── 3. ROTATION STRIP (COLOR BLOCKING) ── */
+    /* --- 3. ROTATION STRIP --- */
     .rotation-strip {
       background: var(--yellow);
       border-bottom: var(--border-thick);
@@ -110,7 +105,7 @@
       text-transform: uppercase;
     }
 
-    /* ── 4. FORMS & CARDS ── */
+    /* --- 4. FORMS & CARDS --- */
     .section {
       padding: 20px;
       border-bottom: var(--border-thick);
@@ -153,7 +148,7 @@
       border-width: 3px;
     }
 
-    /* Geometric Badges */
+    /* Geometric badges — each provider gets a distinct shape */
     .provider-badge {
       display: flex;
       align-items: center;
@@ -169,17 +164,11 @@
       flex-shrink: 0;
     }
 
-    /* Unique shapes per provider */
-    #dot-gemini {
-      border-radius: 50%;
-    }
+    #dot-gemini     { border-radius: 50%; }
+    #dot-groq       { border-radius: 0; }
+    #dot-openrouter { border-radius: 50%; }
 
-    /* Circle */
-    #dot-groq {
-      border-radius: 0;
-    }
-
-    /* Square */
+    /* clip-path triangle — border approach doesn't work with .set background swap */
     #dot-mistral {
       clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
       border: none;
@@ -187,18 +176,8 @@
       height: 12px;
     }
 
-    /* Triangle */
-    #dot-openrouter {
-      border-radius: 50%;
-    }
-
-    .provider-dot.set {
-      background: var(--red);
-    }
-
-    #dot-mistral.set {
-      background: var(--red);
-    }
+    .provider-dot.set  { background: var(--red); }
+    #dot-mistral.set   { background: var(--red); }
 
     .provider-name {
       font-size: 14px;
@@ -235,14 +214,8 @@
       border-radius: 0;
     }
 
-    .key-input:focus {
-      background: var(--yellow);
-    }
-
-    .key-input.has-value {
-      background: #E8F5E9;
-      /* Subtle green to indicate filled */
-    }
+    .key-input:focus       { background: var(--yellow); }
+    .key-input.has-value   { background: #E8F5E9; }
 
     .toggle-vis {
       position: absolute;
@@ -261,11 +234,9 @@
       justify-content: center;
     }
 
-    .toggle-vis:hover {
-      background: var(--blue);
-    }
+    .toggle-vis:hover { background: var(--blue); }
 
-    /* ── 5. BYOK & ACTIVE ENGINE ── */
+    /* --- 5. BYOK & ACTIVE ENGINE --- */
     .byok-badge {
       background: var(--blue);
       color: var(--pure-white);
@@ -294,35 +265,29 @@
       font-family: var(--font-mono);
       font-size: 11px;
       font-weight: 700;
-      color: #4ade80;
-      /* Terminal green */
+      color: #4ade80; /* terminal green */
       display: none;
       align-items: center;
       gap: 10px;
       text-transform: uppercase;
     }
 
-    .active-engine.visible {
-      display: flex;
-    }
+    .active-engine.visible { display: flex; }
 
     .pulse {
       width: 12px;
       height: 12px;
       background: var(--red);
       border: 2px solid var(--pure-white);
-      border-radius: 0;
-      /* Square pulse */
+      border-radius: 0; /* intentionally square — matches Bauhaus grid motif */
       animation: blink 1s steps(2) infinite;
     }
 
     @keyframes blink {
-      50% {
-        opacity: 0;
-      }
+      50% { opacity: 0; }
     }
 
-    /* ── 6. BUTTONS & FOOTER ── */
+    /* --- 6. BUTTONS & FOOTER --- */
     .save-container {
       padding: 20px;
       background: var(--blue);
@@ -344,9 +309,7 @@
       transition: transform 0.1s, box-shadow 0.1s;
     }
 
-    .save-btn:hover {
-      background: var(--pure-white);
-    }
+    .save-btn:hover  { background: var(--pure-white); }
 
     .save-btn:active {
       transform: translate(4px, 4px);
@@ -364,23 +327,9 @@
       box-shadow: var(--shadow-sm);
     }
 
-    .status-bar.ok {
-      background: #4ade80;
-      color: var(--black);
-      display: block;
-    }
-
-    .status-bar.err {
-      background: var(--red);
-      color: var(--pure-white);
-      display: block;
-    }
-
-    .status-bar.info {
-      background: var(--white);
-      color: var(--black);
-      display: block;
-    }
+    .status-bar.ok   { background: #4ade80; color: var(--black);      display: block; }
+    .status-bar.err  { background: var(--red); color: var(--pure-white); display: block; }
+    .status-bar.info { background: var(--white); color: var(--black);  display: block; }
 
     .footer {
       background: var(--black);
@@ -399,9 +348,7 @@
       border-bottom: 2px solid transparent;
     }
 
-    .footer-link:hover {
-      border-bottom-color: var(--yellow);
-    }
+    .footer-link:hover { border-bottom-color: var(--yellow); }
 
     .version-tag {
       color: var(--white);
