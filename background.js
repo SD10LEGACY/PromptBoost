@@ -1,10 +1,10 @@
 /**
- * PromptBoost Background Service Worker v3.2
+ * PromptBoost Background Service Worker
  *
  * All AI calls live here — service workers are exempt from the host page's CSP,
  * which means we can hit external APIs that content scripts can't touch directly.
  * Keys are read from chrome.storage.local (written by popup.js on save).
- *
+ *Nano gemini not working on my PC ffs
  * Engine rotation order:
  *   BYOK (OpenRouter, premium model) → Gemini 2.0 Flash → Groq Llama-3.3-70b
  *   → Mistral Small → OpenRouter free tier
