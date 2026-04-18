@@ -1,9 +1,16 @@
 /**
  * PromptBoost Popup — Key Management
- * Reads/writes to chrome.storage.local (encrypted by Chrome OS, extension-only)
+ * Reads/writes to chrome.storage.local (sandboxed per-extension, encrypted at rest by the OS).
  */
 
-const KEYS = ['gemini', 'groq', 'mistral', 'openrouter', 'byok'];
+const ENGINE_IDS = ['gemini', 'groq', 'mistral', 'openrouter', 'byok'];
+
+const ENGINE_LABELS = {
+    gemini:     'GEMINI',
+    groq:       'GROQ',
+    mistral:    'MISTRAL',
+    openrouter: 'OPENROUTER',
+};
 
 function setStatus(msg, type = 'info') {
     const bar = document.getElementById('status-bar');
@@ -11,47 +18,47 @@ function setStatus(msg, type = 'info') {
     bar.className = 'status-bar ' + type;
 }
 
-function updateDot(id, hasValue) {
+function updateDot(id, isActive) {
     const dot   = document.getElementById('dot-' + id);
     const block = document.getElementById('block-' + id);
     const input = document.getElementById('key-' + id);
     if (!dot) return;
-    dot.className   = 'provider-dot' + (hasValue ? ' set' : '');
-    block.className = 'provider-block' + (hasValue ? ' active-key' : '');
-    if (input && hasValue) input.classList.add('has-value');
-    else if (input) input.classList.remove('has-value');
+    dot.className   = 'provider-dot' + (isActive ? ' set' : '');
+    block.className = 'provider-block' + (isActive ? ' active-key' : '');
+    input?.classList.toggle('has-value', isActive);
 }
 
-// ── LOAD saved keys on open ───────────────────────────────────────────────
-chrome.storage.local.get(KEYS.map(k => 'pb_key_' + k), (result) => {
-    let activeEngines = [];
-    KEYS.forEach(id => {
-        const stored = result['pb_key_' + id] || '';
-        const input  = document.getElementById('key-' + id);
-        if (stored && input) {
-            input.value = stored;
+function showActiveEngineBar(text) {
+    const bar = document.getElementById('active-engine-bar');
+    const txt = document.getElementById('active-engine-text');
+    bar.classList.add('visible');
+    txt.textContent = text;
+}
+
+chrome.storage.local.get(ENGINE_IDS.map(k => 'pb_key_' + k), (stored) => {
+    const activeEngineLabels = [];
+
+    ENGINE_IDS.forEach(id => {
+        const value = stored['pb_key_' + id] || '';
+        const input = document.getElementById('key-' + id);
+        if (value && input) {
+            input.value = value;
             input.classList.add('has-value');
         }
-        updateDot(id, !!stored);
-        if (stored && id !== 'byok') {
-            const labels = { gemini: 'GEMINI', groq: 'GROQ', mistral: 'MISTRAL', openrouter: 'OPENROUTER' };
-            activeEngines.push(labels[id] || id.toUpperCase());
+        updateDot(id, !!value);
+        if (value && id !== 'byok') {
+            activeEngineLabels.push(ENGINE_LABELS[id] ?? id.toUpperCase());
         }
     });
 
-    const byok = result['pb_key_byok'] || '';
-    const bar  = document.getElementById('active-engine-bar');
-    const txt  = document.getElementById('active-engine-text');
-    if (byok) {
-        bar.classList.add('visible');
-        txt.textContent = 'BYOK_ACTIVE — custom key takes priority';
-    } else if (activeEngines.length) {
-        bar.classList.add('visible');
-        txt.textContent = 'ACTIVE_ENGINES: ' + activeEngines.join(' → ');
+    const byokValue = stored['pb_key_byok'] || '';
+    if (byokValue) {
+        showActiveEngineBar('BYOK_ACTIVE — custom key takes priority');
+    } else if (activeEngineLabels.length) {
+        showActiveEngineBar('ACTIVE_ENGINES: ' + activeEngineLabels.join(' → '));
     }
 });
 
-// ── TOGGLE VISIBILITY ─────────────────────────────────────────────────────
 document.querySelectorAll('.toggle-vis').forEach(btn => {
     btn.addEventListener('click', () => {
         const input = document.getElementById(btn.dataset.target);
@@ -60,32 +67,29 @@ document.querySelectorAll('.toggle-vis').forEach(btn => {
     });
 });
 
-// ── SAVE & TEST ───────────────────────────────────────────────────────────
 document.getElementById('save-btn').addEventListener('click', async () => {
-    const btn = document.getElementById('save-btn');
-    btn.textContent = 'SAVING...';
-    btn.classList.add('saving');
+    const saveBtn = document.getElementById('save-btn');
+    saveBtn.textContent = 'SAVING...';
+    saveBtn.classList.add('saving');
 
-    const toSave = {};
-    KEYS.forEach(id => {
-        const val = (document.getElementById('key-' + id)?.value || '').trim();
-        toSave['pb_key_' + id] = val;
-        updateDot(id, !!val);
-    });
+    const payload = Object.fromEntries(
+        ENGINE_IDS.map(id => {
+            const val = (document.getElementById('key-' + id)?.value || '').trim();
+            updateDot(id, !!val);
+            return ['pb_key_' + id, val];
+        })
+    );
 
-    chrome.storage.local.set(toSave, async () => {
+    chrome.storage.local.set(payload, () => {
         setStatus('✅ Keys saved. Testing connection...', 'ok');
 
-        // Send test message to background to verify at least one key works
         chrome.runtime.sendMessage({ action: 'testKeys' }, (response) => {
-            btn.textContent = 'SAVE_AND_TEST_KEYS';
-            btn.classList.remove('saving');
+            saveBtn.textContent = 'SAVE_AND_TEST_KEYS';
+            saveBtn.classList.remove('saving');
+
             if (response?.ok) {
                 setStatus(`✅ ${response.engine} is LIVE — "${response.preview}"`, 'ok');
-                const bar = document.getElementById('active-engine-bar');
-                const txt = document.getElementById('active-engine-text');
-                bar.classList.add('visible');
-                txt.textContent = 'ACTIVE_ENGINE: ' + response.engine;
+                showActiveEngineBar('ACTIVE_ENGINE: ' + response.engine);
             } else {
                 setStatus('❌ ' + (response?.error || 'All keys failed. Check your keys.'), 'err');
             }
