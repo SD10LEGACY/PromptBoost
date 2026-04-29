@@ -19,7 +19,7 @@
 <!-- ══════════════════════════════════════════════════════ -->
 
 <p>
-<img src="https://img.shields.io/badge/Microsoft_Edge-IN_REVIEW-0078d4?style=for-the-badge&logo=microsoftedge&logoColor=white" alt="Microsoft Edge (IN REVIEW)"/>
+<a href="https://microsoftedge.microsoft.com/addons/detail/prompt-boost/lmnpdccbiehelbkbpfheolmfdnoeojoa" target="_blank"><img src="https://img.shields.io/badge/Microsoft_Edge-AVAILABLE-0078d4?style=for-the-badge&logo=microsoftedge&logoColor=white" alt="Get it on Microsoft Edge"/></a>
 <img src="https://img.shields.io/badge/Chrome_Extension-COMING_SOON-10a37f?style=for-the-badge&logo=googlechrome&logoColor=white" alt="Chrome Extension (COMING SOON)"/>
 </p>
 <p>
@@ -213,7 +213,7 @@ function injectIntoReactControlledInput(element, engineeredText) {
 | ✅ | Support for `claude.ai`, `gemini.google.com`, `perplexity.ai`, `grok.com` |
 | ✅ | GitHub Actions auto-scraper pipeline (YouTube, Reddit, HN, Dev.to, GitHub) |
 | ✅ | Popup key manager with live engine test & status indicators |
-| ✅ | Microsoft Edge Add-ons Store submission (IN REVIEW) |
+| ✅ | Microsoft Edge Add-ons Store submission (LIVE) |
 | 🔄 | ReAct framework for agentic task prompts |
 | ⏳ | Chrome Web Store submission |
 | ⏳ | Custom prompt framework builder (user-defined templates) |
