@@ -1,184 +1,218 @@
 <div align="center">
 
-<!-- ══════════════════════════════════════════════════════ -->
-<!--                   ANIMATED HEADER                      -->
-<!-- ══════════════════════════════════════════════════════ -->
+<!-- ╔══════════════════════════════════════════════════════╗ -->
+<!--                   BAUHAUS HERO HEADER                   -->
+<!-- ╚══════════════════════════════════════════════════════╝ -->
 
-<img src="https://capsule-render.vercel.app/api?type=waving&color=0:0d1117,35:063b35,70:10a37f,100:0d1117&height=300&section=header&text=PromptBoost&fontSize=82&fontAlignY=42&fontColor=ffffff&desc=The%20Intelligent%20Prompt%20Engineering%20Engine&descAlignY=62&descSize=24&animation=fadeIn&v=2" width="100%" alt="PromptBoost Header"/>
+<img src="https://capsule-render.vercel.app/api?type=rect&color=121212&height=220&text=%E2%97%BC%20PROMPTBOOST%20%E2%97%89&fontSize=72&fontColor=F0C020&fontAlignY=48&desc=THE%20INTELLIGENT%20PROMPT%20ENGINEERING%20ENGINE&descSize=17&descColor=FFFFFF&descAlignY=73&animation=fadeIn" width="100%" alt="PromptBoost — The Intelligent Prompt Engineering Engine"/>
 
-<!-- ══════════════════════════════════════════════════════ -->
-<!--                  TYPING ANIMATION                      -->
-<!-- ══════════════════════════════════════════════════════ -->
-
-[![Typing SVG](https://readme-typing-svg.demolab.com?font=Fira+Code&weight=600&size=18&duration=2800&pause=900&color=10A37F&center=true&vCenter=true&width=750&height=48&lines=BYOK+Multi-Engine+Rotation%3A+Gemini+%E2%86%92+Groq+%E2%86%92+Mistral;Zero+Telemetry.+Keys+Live+in+chrome.storage.local+Only.;CO-STAR+and+ReAct+Frameworks+On+the+Fly.;Auto-Updating+Library+via+GitHub+Actions+Scraper.;Bauhaus+Constructivist+UI+-+Pure+Vanilla+CSS.)](https://git.io/typing-svg)
+<!-- Bauhaus tri-color bar -->
+<img src="https://capsule-render.vercel.app/api?type=rect&color=D02020&height=7" width="33.33%" /><img src="https://capsule-render.vercel.app/api?type=rect&color=1040C0&height=7" width="33.33%" /><img src="https://capsule-render.vercel.app/api?type=rect&color=F0C020&height=7" width="33.34%" />
 
 <br><br>
 
-<!-- ══════════════════════════════════════════════════════ -->
-<!--                      BADGES                            -->
-<!-- ══════════════════════════════════════════════════════ -->
+<!-- STORE BADGES -->
+<a href="https://microsoftedge.microsoft.com/addons/detail/prompt-boost/lmnpdccbiehelbkbpfheolmfdnoeojoa">
+  <img src="https://img.shields.io/badge/MICROSOFT_EDGE-INSTALL_NOW-121212?style=for-the-badge&logo=microsoftedge&logoColor=white" alt="Get it on Microsoft Edge"/>
+</a>
+&nbsp;
+<img src="https://img.shields.io/badge/CHROME_EXTENSION-COMING_SOON-1040C0?style=for-the-badge&logo=googlechrome&logoColor=white" alt="Chrome — Coming Soon"/>
 
-<p>
-<a href="https://microsoftedge.microsoft.com/addons/detail/prompt-boost/lmnpdccbiehelbkbpfheolmfdnoeojoa" target="_blank"><img src="https://img.shields.io/badge/Microsoft_Edge-AVAILABLE-0078d4?style=for-the-badge&logo=microsoftedge&logoColor=white" alt="Get it on Microsoft Edge"/></a>
-<img src="https://img.shields.io/badge/Chrome_Extension-COMING_SOON-10a37f?style=for-the-badge&logo=googlechrome&logoColor=white" alt="Chrome Extension (COMING SOON)"/>
-</p>
-<p>
-<img src="https://img.shields.io/badge/Chrome_Extension-In_Development-10a37f?style=for-the-badge&logo=googlechrome&logoColor=white" alt="Chrome Extension"/>
-<img src="https://img.shields.io/badge/Manifest-V3_Compliant-4ade80?style=for-the-badge&logo=googlechrome&logoColor=black" alt="Manifest V3"/>
-</p>
-<p>
-<img src="https://img.shields.io/badge/Privacy-100%25_BYOK-ef4444?style=for-the-badge&logo=shield&logoColor=white" alt="Privacy"/>
-<img src="https://img.shields.io/badge/API_Keys-BYOK_Local-f59e0b?style=for-the-badge&logo=keycdn&logoColor=white" alt="BYOK API Keys"/>
-<img src="https://img.shields.io/badge/License-MIT-3b82f6?style=for-the-badge&logo=opensourceinitiative&logoColor=white" alt="MIT License"/>
-</p>
-<!--
-<br>
-A privacy-first, zero-telemetry browser extension that seamlessly intercepts and perfectly engineers your LLM prompts using Bring Your Own Key (BYOK) with Intelligent Multi-Engine Rotation — before they ever reach a server.
-<br>
-</div>
--->
-<div align="center">
-<br>
+<br><br>
 
-> *A privacy-first, zero-telemetry browser extension that seamlessly intercepts and perfectly engineers your LLM prompts using Intelligent Multi-Engine Rotation (Gemini → Groq → Mistral → OpenRouter) — with your API keys stored only on your device.*
+<!-- PROPERTY BADGES -->
+<img src="https://img.shields.io/badge/PRIVACY-100%25_BYOK-D02020?style=for-the-badge&logo=shield&logoColor=white" alt="Privacy"/>
+&nbsp;
+<img src="https://img.shields.io/badge/API_KEYS-LOCAL_ONLY-121212?style=for-the-badge&logo=keycdn&logoColor=white" alt="API Keys — Local Only"/>
+&nbsp;
+<img src="https://img.shields.io/badge/TELEMETRY-ZERO-D02020?style=for-the-badge&logo=shield&logoColor=white" alt="Zero Telemetry"/>
+&nbsp;
+<img src="https://img.shields.io/badge/MANIFEST-V3-1040C0?style=for-the-badge&logo=googlechrome&logoColor=white" alt="Manifest V3"/>
+&nbsp;
+<img src="https://img.shields.io/badge/LICENSE-MIT-F0C020?style=for-the-badge&logo=opensourceinitiative&logoColor=black" alt="MIT License"/>
 
-<br>
+<br><br>
+
+> **A privacy-first, zero-telemetry browser extension that seamlessly intercepts and perfectly engineers your LLM prompts using Intelligent Multi-Engine Rotation (Gemini → Groq → Mistral → OpenRouter) — with your API keys stored only on your device.**
 
 </div>
 
-***
+<br>
 
-<div align="center">
+<!-- ═══════════════════════════════════════════════════════════ -->
 
-## 🚨 The Problem. The Solution.
+<img src="https://capsule-render.vercel.app/api?type=rect&color=D02020&height=54&text=%E2%97%BC%20%20THE%20PROBLEM%20%2F%20THE%20SOLUTION&fontSize=21&fontColor=FFFFFF&fontAlignY=56" width="100%"/>
 
-</div>
+<br>
 
-> **🔴 The Problem:** Prompt engineering tools either require expensive subscriptions, force you to send **private chat context** to third-party servers you don't control, or depend on experimental browser flags that never ship reliably.
->
-> **🟢 The Solution:** PromptBoost uses a **BYOK (Bring Your Own Key)** model with **Intelligent Multi-Engine Rotation**. Your API keys are saved exclusively in `chrome.storage.local` — encrypted by Chrome, readable only by this extension. The extension rotates through **Gemini 2.0 Flash → Groq Llama-3.3 → Mistral Small → OpenRouter** automatically. **Your keys never touch our servers. There are no servers.**
+<table width="100%">
+<tr>
+<td width="50%" valign="top">
 
-***
+### 🔴 THE PROBLEM
 
-## ✨ Core Architecture & Features
+Existing prompt engineering tools force one of three ugly tradeoffs:
 
-<table>
-  <tr>
-    <td width="50%" valign="top">
-      <h3>🔑 BYOK Multi-Engine Rotation</h3>
-      <p>Bring your own free API keys from Gemini AI Studio, Groq, Mistral, and OpenRouter. PromptBoost rotates through them intelligently — if one hits a rate limit or fails, the next engine fires automatically. Add a premium <b>BYOK key</b> to unlock GPT-4o, Claude 3.5 Sonnet, and Gemini 1.5 Pro via OpenRouter.</p>
-    </td>
-    <td width="50%" valign="top">
-      <h3>⚡ DOM-Level Interception</h3>
-      <p>Bypasses standard <code>value</code> assignments by dispatching React Synthetic Events and formatting <code>contenteditable</code> nodes. Natively controls complex Single-Page Applications without breaking their internal state.</p>
-    </td>
-  </tr>
-  <tr>
-    <td width="50%" valign="top">
-      <h3>📚 Auto-Updating Cloud Library</h3>
-      <p>A slide-out sidebar panel that fetches a live database of trending, community-sourced prompts. The library is automatically populated by a <b>GitHub Actions Python scraper</b> that harvests YouTube, Hacker News, Reddit, Dev.to, and GitHub — running every 6 hours. <b>No Chrome Web Store re-submission required.</b></p>
-    </td>
-    <td width="50%" valign="top">
-      <h3>🎯 Context-Aware Platform Detection</h3>
-      <p>Automatically detects the host environment (<code>chatgpt.com</code>, <code>claude.ai</code>, <code>gemini.google.com</code>, <code>perplexity.ai</code>, <code>grok.com</code>) and serves <b>platform-specific prompt frameworks</b>, filtering out irrelevant structural metadata.</p>
-    </td>
-  </tr>
-  <tr>
-    <td width="50%" valign="top">
-      <h3>📐 Scientific Prompt Frameworks</h3>
-      <p>Transforms rough, unstructured input into structured frameworks. <b>CO-STAR</b> (Context, Objective, Style, Tone, Audience, Response) for deep reasoning. <b>ReAct</b> (Reason + Act) for agentic, multi-step tasks.</p>
-    </td>
-    <td width="50%" valign="top">
-      <h3>🔐 Privacy by Architecture</h3>
-      <p>There is no telemetry, no analytics, no logging, and no backend server. API keys are stored in <code>chrome.storage.local</code> — Chrome's encrypted, extension-sandboxed storage. The background service worker calls AI APIs directly from your browser. Privacy isn't a policy — it's the code itself.</p>
-    </td>
-  </tr>
+- **Expensive subscriptions** for basic functionality
+- **Your private chat context** sent to third-party servers you don't control
+- **Experimental browser flags** that never ship reliably
+
+Your prompts — and the context around them — are sensitive. You shouldn't have to trade your privacy for better AI output.
+
+</td>
+<td width="50%" valign="top">
+
+### 🟢 THE SOLUTION
+
+PromptBoost uses a **BYOK (Bring Your Own Key)** model with **Intelligent Multi-Engine Rotation**:
+
+- API keys live **only** in `chrome.storage.local` — encrypted by Chrome, readable only by this extension
+- Rotation fires automatically: **Gemini 2.0 Flash → Groq → Mistral → OpenRouter**
+- Rate-limit on one engine? The next fires instantly
+- **Your keys never touch our servers. There are no servers.**
+
+</td>
+</tr>
 </table>
 
-***
+<br>
 
-## 🛠️ Tech Stack
+<!-- ═══════════════════════════════════════════════════════════ -->
+
+<img src="https://capsule-render.vercel.app/api?type=rect&color=1040C0&height=54&text=%E2%97%89%20%20CORE%20ARCHITECTURE%20%26%20FEATURES&fontSize=21&fontColor=FFFFFF&fontAlignY=56" width="100%"/>
+
+<br>
+
+<table width="100%">
+<tr>
+<td width="50%" valign="top">
+
+**◼ BYOK MULTI-ENGINE ROTATION**
+
+Bring your own free API keys from Gemini AI Studio, Groq, Mistral, and OpenRouter. PromptBoost rotates through them intelligently — if one hits a rate limit or fails, the next engine fires automatically. Add a premium **BYOK key** to unlock GPT-4o, Claude 3.5 Sonnet, and Gemini 1.5 Pro via OpenRouter.
+
+</td>
+<td width="50%" valign="top">
+
+**⚡ DOM-LEVEL INTERCEPTION**
+
+Bypasses standard `value` assignments by dispatching React Synthetic Events and formatting `contenteditable` nodes. Natively controls complex Single-Page Applications without breaking their internal state.
+
+</td>
+</tr>
+<tr>
+<td width="50%" valign="top">
+
+**◼ AUTO-UPDATING CLOUD LIBRARY**
+
+A slide-out sidebar panel that fetches a live database of trending, community-sourced prompts. Populated by a **GitHub Actions Python scraper** that harvests YouTube, Hacker News, Reddit, Dev.to, and GitHub every 6 hours. **No Web Store re-submission required.**
+
+</td>
+<td width="50%" valign="top">
+
+**🎯 CONTEXT-AWARE PLATFORM DETECTION**
+
+Automatically detects the host environment — `chatgpt.com`, `claude.ai`, `gemini.google.com`, `perplexity.ai`, `grok.com` — and serves **platform-specific prompt frameworks**, filtering out irrelevant structural metadata.
+
+</td>
+</tr>
+<tr>
+<td width="50%" valign="top">
+
+**📐 SCIENTIFIC PROMPT FRAMEWORKS**
+
+Transforms rough, unstructured input into precision frameworks. **CO-STAR** (Context, Objective, Style, Tone, Audience, Response) for deep reasoning tasks. **ReAct** (Reason + Act) for agentic, multi-step execution.
+
+</td>
+<td width="50%" valign="top">
+
+**🔐 PRIVACY BY ARCHITECTURE**
+
+No telemetry. No analytics. No logging. No backend server. API keys are stored in `chrome.storage.local` — Chrome's encrypted, extension-sandboxed storage. The background service worker calls AI APIs directly from your browser. Privacy isn't a policy — it's the code itself.
+
+</td>
+</tr>
+</table>
+
+<br>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+
+<img src="https://capsule-render.vercel.app/api?type=rect&color=F0C020&height=54&text=%E2%96%B2%20%20TECH%20STACK&fontSize=21&fontColor=121212&fontAlignY=56" width="100%"/>
+
+<br>
 
 <div align="center">
 
 <img src="https://skillicons.dev/icons?i=js,html,css,chrome,python,git,github,vscode&perline=8&theme=dark" alt="Tech Stack Icons"/>
 
-<br>
+<br><br>
 
-| Layer | Technology | Purpose |
-|---|---|---|
+</div>
+
+| LAYER | TECHNOLOGY | PURPOSE |
+|:------|:-----------|:--------|
 | 🧠 **AI Engine #1** | Gemini 2.0 Flash — AI Studio API | Primary prompt rewriting (free tier) |
 | 🧠 **AI Engine #2** | Groq — Llama-3.3-70B | Fastest inference fallback |
 | 🧠 **AI Engine #3** | Mistral Small | Quality fallback |
 | 🧠 **AI Engine #4** | OpenRouter — Llama-3.1-8B (free) | Last-resort fallback |
 | 🔑 **BYOK** | OpenRouter (any model) | Premium user-supplied key — highest priority |
 | 🔌 **Extension** | Chrome MV3 — Service Workers | Background orchestration & CSP-exempt fetch |
-| 💉 **Injection** | Content Scripts — DOM APIs | React/ProseMirror overrides |
-| 🎨 **UI** | Vanilla CSS — Bauhaus Design | Zero-dependency sidebar & popup |
+| 💉 **Injection** | Content Scripts — DOM APIs | React/ProseMirror state overrides |
+| 🎨 **UI** | Vanilla CSS — Bauhaus Constructivist | Zero-dependency sidebar & popup |
 | ☁️ **Library Feed** | GitHub Raw JSON | Live prompt database |
 | 🤖 **Scraper** | GitHub Actions — Python | Auto-harvests & curates prompts every 6h |
 
-</div>
+<br>
 
-***
+<!-- ═══════════════════════════════════════════════════════════ -->
 
-## 🤖 The Auto-Scraper Pipeline
+<img src="https://capsule-render.vercel.app/api?type=rect&color=121212&height=54&text=%E2%97%BC%20%20AUTO-SCRAPER%20PIPELINE&fontSize=21&fontColor=F0C020&fontAlignY=56" width="100%"/>
+
+<br>
 
 The prompt library is never static. A Python scraper runs on GitHub Actions every 6 hours, harvests raw content from multiple sources, processes it through the same AI engine rotation, and commits the updated `prompts.json` directly to the repository. The extension fetches this file fresh on every library open — no redeployment needed.
 
 ```
-┌─────────────────────────────────────────────────────────────────┐
-│  AUTO-SCRAPER PIPELINE  (runs every 6h via GitHub Actions)      │
-│                                                                 │
-│  SOURCES          AI BRAIN              OUTPUT                  │
-│  ─────────        ────────              ──────                  │
-│  📺 YouTube  ─┐                                                 │
-│  🟧 HackerNews─┤                    ┌─ database/prompts.json    │
-│  👩 Dev.to   ─┼─▶ Raw Text ──▶ AI  ─┤  (auto-committed)        │
-│  🔴 Reddit   ─┤   Firehose   Rotation│                          │
-│  ⭐ GitHub   ─┘   (scraper.py) └─▶  └─▶ Extension fetches live │
-│                                                                 │
-│  AI ROTATION: Gemini 2.0 Flash → Groq → Mistral → OpenRouter    │
-│  OUTPUT FORMAT: { title, tag, platforms[], text, source }       │
-│  DIVERSITY CAP: max 5 prompts per tag per run                   │
-└─────────────────────────────────────────────────────────────────┘
+╔══════════════════════════════════════════════════════════════════════╗
+║  ◼  AUTO-SCRAPER PIPELINE  —  RUNS EVERY 6H VIA GITHUB ACTIONS      ║
+╠══════════════════════════════════════════════════════════════════════╣
+║                                                                      ║
+║  SOURCES               AI BRAIN              OUTPUT                  ║
+║  ──────────────        ─────────             ──────────────────────  ║
+║  📺 YouTube   ─┐                                                      ║
+║  🟧 HackerNews ─┤                        ┌── database/prompts.json   ║
+║  ✍️  Dev.to    ─┼──▶  Raw Text  ──▶  AI ─┤   (auto-committed to     ║
+║  🔴 Reddit    ─┤    Firehose    Rotation │    this repository)       ║
+║  ⭐ GitHub    ─┘   (scraper.py)         └──▶ Extension fetches live ║
+║                                               on every library open  ║
+╠══════════════════════════════════════════════════════════════════════╣
+║  ROTATION:   Gemini 2.0 Flash  →  Groq  →  Mistral  →  OpenRouter   ║
+║  FORMAT:     { title, tag, platforms[], text, source }               ║
+║  DIVERSITY:  max 5 prompts per tag per run                           ║
+╚══════════════════════════════════════════════════════════════════════╝
 ```
 
-> **Keys used by the scraper** (`GEMINI_API_KEY`, `GROQ_API_KEY`, `MISTRAL_API_KEY`, `OPENROUTER_API_KEY`, `YOUTUBE_API_KEY`) live **only** in GitHub Repository Secrets — they are never bundled into the extension.
+> **Scraper keys** (`GEMINI_API_KEY`, `GROQ_API_KEY`, `MISTRAL_API_KEY`, `OPENROUTER_API_KEY`, `YOUTUBE_API_KEY`) live **exclusively** in GitHub Repository Secrets — they are never bundled into the extension.
 
-***
+<br>
 
-## 🎨 UI / UX Design System
+<!-- ═══════════════════════════════════════════════════════════ -->
 
-The extension's interface avoids the standard "SaaS Bootstrap" aesthetic by implementing a **Constructivist Bauhaus** design language using pure Vanilla CSS — no frameworks, no dependencies.
+<img src="https://capsule-render.vercel.app/api?type=rect&color=121212&height=54&text=%E2%97%89%20%20THE%20REACT%20%2F%20PROSEMIRROR%20INJECTION%20HACK&fontSize=19&fontColor=D02020&fontAlignY=56" width="100%"/>
 
-```
-┌─────────────────────────────────────────────────────────┐
-│  DESIGN PILLARS                                         │
-│                                                         │
-│  📐 GEOMETRY    →  Strict programmatic color-blocking   │
-│  🌑 DEPTH       →  Hard offset shadows, not soft blurs  │
-│  🌊 MOTION      →  CSS translation matrices for reveals │
-│  🎭 SIDEBAR     →  Slide-out glassmorphism panel        │
-│  🖤 PALETTE     →  #0d1117 base · #10a37f accent        │
-└─────────────────────────────────────────────────────────┘
-```
-
-> **Philosophy:** Every pixel is intentional. The UI should feel like a precision instrument — not a landing page.
-
-***
-
-## 🔬 The React / ProseMirror Injection Hack
+<br>
 
 Injecting text into modern AI web apps is notoriously difficult. React and ProseMirror maintain their own virtual state trees and **silently reject** external DOM mutations. PromptBoost targets the `HTMLTextAreaElement` prototype directly to force the React reconciler to acknowledge the injection as a genuine user event.
 
 ```javascript
 /**
  * PROMPTBOOST — Native React State Override
- * 
- * Intercepts the HTMLTextAreaElement's native setter via Object.getOwnPropertyDescriptor,
- * then fires a bubbling 'input' event to trick React's SyntheticEvent system
- * into treating the programmatic write as organic user input.
+ *
+ * Intercepts the HTMLTextAreaElement's native setter via
+ * Object.getOwnPropertyDescriptor, then fires a bubbling 'input'
+ * event to trick React's SyntheticEvent system into treating the
+ * programmatic write as organic user input.
  */
 function injectIntoReactControlledInput(element, engineeredText) {
   // Step 1: Grab the native setter React has overridden
@@ -197,14 +231,71 @@ function injectIntoReactControlledInput(element, engineeredText) {
 
 > **For `contenteditable` nodes** (Claude, Gemini): PromptBoost uses `execCommand('insertText', false, text)` with a `MutationObserver` fallback to handle ProseMirror's immutable document model.
 
-***
+<br>
 
-## 🗺️ Roadmap
+<!-- ═══════════════════════════════════════════════════════════ -->
+
+<img src="https://capsule-render.vercel.app/api?type=rect&color=F0C020&height=54&text=%E2%96%B2%20%20QUICK%20START%20%E2%80%94%20DEVELOPMENT%20SETUP&fontSize=21&fontColor=121212&fontAlignY=56" width="100%"/>
+
+<br>
+
+> **Prerequisites:** Any stable Chrome or Edge build. No special flags. No Canary channel required.
+
+**◼ STEP 1 — CLONE THE REPOSITORY**
+```bash
+git clone https://github.com/SD10LEGACY/PromptBoost.git
+cd PromptBoost
+```
+
+**◼ STEP 2 — LOAD AS AN UNPACKED EXTENSION**
+
+1. Go to `chrome://extensions/` (or `edge://extensions/`)
+2. Toggle **Developer Mode** ON — top-right corner
+3. Click **"Load unpacked"**
+4. Select the cloned `PromptBoost/` directory
+
+**◼ STEP 3 — ADD YOUR FREE API KEYS**
+
+Click the **PromptBoost icon** in your toolbar to open the key management popup. Paste your free keys:
+
+| KEY | SOURCE |
+|:----|:-------|
+| `GEMINI_API_KEY` | [Google AI Studio →](https://aistudio.google.com/app/apikey) |
+| `GROQ_API_KEY` | [Groq Console →](https://console.groq.com/keys) |
+| `MISTRAL_API_KEY` | [Mistral Console →](https://console.mistral.ai/) |
+| `OPENROUTER_API_KEY` | [OpenRouter →](https://openrouter.ai/keys) |
+
+Click **`SAVE_AND_TEST_KEYS`**. PromptBoost fires a live engine test and confirms which is active.
+
+> ✅ Keys are saved in `chrome.storage.local` — encrypted by Chrome, accessible only to this extension. Never sent to any PromptBoost server.
+
+**◼ STEP 4 — OPTIONAL: BYOK PREMIUM KEY**
+
+In the **BRING\_YOUR\_OWN\_KEY** section, add a paid OpenRouter key to unlock `GPT-4o`, `Claude 3.5 Sonnet`, `Gemini 1.5 Pro`. This key takes **priority #1** over all rotation engines.
+
+**◼ STEP 5 — VERIFY**
+
+Navigate to any supported platform. Two new buttons will appear near the input box:
+
+| BUTTON | ACTION |
+|:------:|:-------|
+| **✨** | Engineers your typed prompt using the best available AI engine |
+| **📚** | Opens the live prompt library (auto-updated every 6h via GitHub Actions) |
+
+**Supported:** `chatgpt.com` · `claude.ai` · `gemini.google.com` · `perplexity.ai` · `grok.com`
+
+<br>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+
+<img src="https://capsule-render.vercel.app/api?type=rect&color=1040C0&height=54&text=%E2%97%89%20%20ROADMAP&fontSize=21&fontColor=FFFFFF&fontAlignY=56" width="100%"/>
+
+<br>
 
 <div align="center">
 
-| Status | Feature |
-|:---:|---|
+| STATUS | FEATURE |
+|:------:|:--------|
 | ✅ | Core DOM injection engine for `chatgpt.com` |
 | ✅ | CO-STAR framework transformer |
 | ✅ | Cloud JSON prompt library with slide-out sidebar |
@@ -213,7 +304,7 @@ function injectIntoReactControlledInput(element, engineeredText) {
 | ✅ | Support for `claude.ai`, `gemini.google.com`, `perplexity.ai`, `grok.com` |
 | ✅ | GitHub Actions auto-scraper pipeline (YouTube, Reddit, HN, Dev.to, GitHub) |
 | ✅ | Popup key manager with live engine test & status indicators |
-| ✅ | Microsoft Edge Add-ons Store submission (LIVE) |
+| ✅ | Microsoft Edge Add-ons Store (LIVE) |
 | 🔄 | ReAct framework for agentic task prompts |
 | ⏳ | Chrome Web Store submission |
 | ⏳ | Custom prompt framework builder (user-defined templates) |
@@ -222,65 +313,19 @@ function injectIntoReactControlledInput(element, engineeredText) {
 
 </div>
 
-`✅ Done` &nbsp; `🔄 In Progress` &nbsp; `⏳ Planned` &nbsp; `💡 Idea`
+<br>
 
-***
-
-<details>
-<summary><h2>🚀 Quick Start (Development Setup)</h2></summary>
+`✅ Done` &nbsp;·&nbsp; `🔄 In Progress` &nbsp;·&nbsp; `⏳ Planned` &nbsp;·&nbsp; `💡 Idea`
 
 <br>
 
-**Prerequisites:** Any stable Chrome or Edge build. No special flags or Canary channel required.
+<!-- ═══════════════════════════════════════════════════════════ -->
 
-**1. Clone the repository**
-```bash
-git clone https://github.com/SD10LEGACY/PromptBoost.git
-cd PromptBoost
-```
-
-**2. Load as an Unpacked Extension**
-
-1. Navigate to `chrome://extensions/` (or `edge://extensions/`)
-2. Toggle **Developer Mode** ON (top-right corner)
-3. Click **"Load unpacked"**
-4. Select the cloned `PromptBoost/` directory
-
-**3. Add Your API Keys**
-
-Click the **PromptBoost icon** (🅿) in your Chrome toolbar to open the key management popup.
-
-Paste your free API keys — get them from:
-- [Google AI Studio](https://aistudio.google.com/app/apikey) → `GEMINI_API_KEY`
-- [Groq Console](https://console.groq.com/keys) → `GROQ_API_KEY`
-- [Mistral Console](https://console.mistral.ai/) → `MISTRAL_API_KEY`
-- [OpenRouter](https://openrouter.ai/keys) → `OPENROUTER_API_KEY`
-
-Click **`SAVE_AND_TEST_KEYS`**. PromptBoost will fire a live test and confirm which engine is active.
-
-> ✅ Keys are saved in `chrome.storage.local` — encrypted by Chrome, accessible only to this extension. They are never sent to any PromptBoost server.
-
-**4. Optional — BYOK Premium Key**
-
-In the popup's **BRING_YOUR_OWN_KEY** section, add a paid OpenRouter key to unlock access to `GPT-4o`, `Claude 3.5 Sonnet`, `Gemini 1.5 Pro`, and more. This key takes **priority #1** over all other rotation engines.
-
-**5. Verify it works**
-
-Navigate to `chatgpt.com`, `claude.ai`, `gemini.google.com`, `perplexity.ai`, or `grok.com`. You should see the **✨** and **📚** buttons appear near the input box.
-
-- **✨** — Engineers your typed prompt using the best available engine
-- **📚** — Opens the live prompt library (auto-updated every 6h by GitHub Actions)
-
-</details>
-
-***
-
-<details>
-<summary><h2>🤝 Contributing</h2></summary>
+<img src="https://capsule-render.vercel.app/api?type=rect&color=D02020&height=54&text=%E2%97%BC%20%20CONTRIBUTING&fontSize=21&fontColor=FFFFFF&fontAlignY=56" width="100%"/>
 
 <br>
 
-Contributions, issues and feature requests are welcome!
+Contributions, issues, and feature requests are welcome.
 
 1. **Fork** the repository
 2. Create a feature branch: `git checkout -b feat/your-feature-name`
@@ -290,24 +335,19 @@ Contributions, issues and feature requests are welcome!
 
 Please follow [Conventional Commits](https://www.conventionalcommits.org/) for commit messages.
 
-</details>
+<br>
 
-***
+<!-- ═══════════════════════════════════════════════════════════ -->
 
 <div align="center">
 
-<!-- ══════════════════════════════════════════════════════ -->
-<!--                    FOOTER ANIMATION                    -->
-<!-- ══════════════════════════════════════════════════════ -->
+<!-- Bauhaus tri-color bar (inverted order) -->
+<img src="https://capsule-render.vercel.app/api?type=rect&color=F0C020&height=7" width="33.34%" /><img src="https://capsule-render.vercel.app/api?type=rect&color=1040C0&height=7" width="33.33%" /><img src="https://capsule-render.vercel.app/api?type=rect&color=D02020&height=7" width="33.33%" />
 
-[![Typing SVG](https://readme-typing-svg.demolab.com?font=Fira+Code&weight=500&size=15&duration=4000&pause=1500&color=10A37F&center=true&vCenter=true&width=600&height=40&lines=Built+with+BYOK+Multi-Engine+AI+by+Shreyojit.;Privacy+is+not+a+feature.+Its+the+foundation.)](https://git.io/typing-svg)
+<img src="https://capsule-render.vercel.app/api?type=rect&color=121212&height=130&text=Built%20with%20BYOK%20Multi-Engine%20AI%20by%20Shreyojit.%20Privacy%20is%20not%20a%20feature%20%E2%80%94%20it%27s%20the%20foundation.&fontSize=13&fontColor=F0C020&fontAlignY=50&animation=fadeIn" width="100%" alt="PromptBoost Footer"/>
 
 <br>
 
-<img src="https://komarev.com/ghpvc/?username=SD10LEGACY&label=Profile+Views&color=10a37f&style=for-the-badge" alt="Profile Views"/>
-
-<br><br>
-
-<img src="https://capsule-render.vercel.app/api?type=waving&color=0:0d1117,35:063b35,70:10a37f,100:0d1117&height=140&section=footer&animation=fadeIn" width="100%" alt="PromptBoost Footer"/>
+[![Profile Views](https://komarev.com/ghpvc/?username=SD10LEGACY&label=PROFILE+VIEWS&color=D02020&style=for-the-badge)](https://github.com/SD10LEGACY)
 
 </div>
