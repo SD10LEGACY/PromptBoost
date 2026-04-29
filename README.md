@@ -173,6 +173,9 @@ No telemetry. No analytics. No logging. No backend server. API keys are stored i
 
 The prompt library is never static. A Python scraper runs on GitHub Actions every 6 hours, harvests raw content from multiple sources, processes it through the same AI engine rotation, and commits the updated `prompts.json` directly to the repository. The extension fetches this file fresh on every library open — no redeployment needed.
 
+<details>
+<summary><b>◼ VIEW PIPELINE DIAGRAM</b></summary>
+
 ```
 ╔══════════════════════════════════════════════════════════════════════╗
 ║  ◼  AUTO-SCRAPER PIPELINE  —  RUNS EVERY 6H VIA GITHUB ACTIONS      ║
@@ -193,6 +196,8 @@ The prompt library is never static. A Python scraper runs on GitHub Actions ever
 ╚══════════════════════════════════════════════════════════════════════╝
 ```
 
+</details>
+
 > **Scraper keys** (`GEMINI_API_KEY`, `GROQ_API_KEY`, `MISTRAL_API_KEY`, `OPENROUTER_API_KEY`, `YOUTUBE_API_KEY`) live **exclusively** in GitHub Repository Secrets — they are never bundled into the extension.
 
 <br>
@@ -204,6 +209,9 @@ The prompt library is never static. A Python scraper runs on GitHub Actions ever
 <br>
 
 Injecting text into modern AI web apps is notoriously difficult. React and ProseMirror maintain their own virtual state trees and **silently reject** external DOM mutations. PromptBoost targets the `HTMLTextAreaElement` prototype directly to force the React reconciler to acknowledge the injection as a genuine user event.
+
+<details>
+<summary><b>◉ VIEW INJECTION CODE — injectIntoReactControlledInput()</b></summary>
 
 ```javascript
 /**
@@ -229,6 +237,8 @@ function injectIntoReactControlledInput(element, engineeredText) {
 }
 ```
 
+</details>
+
 > **For `contenteditable` nodes** (Claude, Gemini): PromptBoost uses `execCommand('insertText', false, text)` with a `MutationObserver` fallback to handle ProseMirror's immutable document model.
 
 <br>
@@ -242,10 +252,16 @@ function injectIntoReactControlledInput(element, engineeredText) {
 > **Prerequisites:** Any stable Chrome or Edge build. No special flags. No Canary channel required.
 
 **◼ STEP 1 — CLONE THE REPOSITORY**
+
+<details>
+<summary><b>▲ VIEW CLONE COMMAND</b></summary>
+
 ```bash
 git clone https://github.com/SD10LEGACY/PromptBoost.git
 cd PromptBoost
 ```
+
+</details>
 
 **◼ STEP 2 — LOAD AS AN UNPACKED EXTENSION**
 
