@@ -79,7 +79,7 @@ PromptBoost uses a **BYOK (Bring Your Own Key)** model with **Intelligent Multi-
 
 <!-- ═══════════════════════════════════════════════════════════ -->
 
-<img src="https://img.shields.io/badge/CORE%20ARCHITECTURE%20%26%20FEATURES-1040C0?style=for-the-badge&labelColor=1040C0" width="100%" height="54"/>
+<img src="https://capsule-render.vercel.app/api?type=rect&color=1040C0&height=54&text=%E2%97%89%20%20CORE%20ARCHITECTURE%20%2B%20FEATURES&fontSize=21&fontColor=FFFFFF&fontAlignY=56" width="100%"/>
 
 <br>
 
